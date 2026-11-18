@@ -1,2 +1,4 @@
 [toolchain]
 channel = "1.98.1"
+# ci runs fmt and clippy; without these rustup installs only the compiler
+components = ["rustfmt", "clippy"]
