@@ -1,0 +1,130 @@
+name: Release
+
+# a v* tag that matches the crate's version publishes binaries as a github release. run by
+# hand, it builds them as workflow artifacts only, to check a change before tagging.
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+
+    runs-on: ubuntu-26.04
+
+    steps:
+
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Check tag matches the crate version
+      if: github.ref_type == 'tag'
+      run: |
+        tag_version="${GITHUB_REF_NAME#v}"
+        crate_version="$(cargo metadata --no-deps --format-version 1 | python3 -c 'import json, sys; print(next(p["version"] for p in json.load(sys.stdin)["packages"] if p["name"] == "compcore"))')"
+        if [ "$tag_version" != "$crate_version" ]; then
+          echo "::error::tag $GITHUB_REF_NAME, but crates/compcore/Cargo.toml has $crate_version"
+          exit 1
+        fi
+
+    - uses: Swatinem/rust-cache@v2
+
+    - name: Format
+      run: cargo fmt --all --check
+
+    - name: Clippy
+      run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+    # the generator is only run inside podman by tools/generator/generate.sh
+    - name: Test
+      run: cargo test -p compcore -p compcore-spec --locked
+
+  build:
+
+    needs: check
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # musl links statically, so one linux binary runs on every distro
+          - { os: ubuntu-26.04, target: x86_64-unknown-linux-musl }
+          - { os: ubuntu-26.04-arm, target: aarch64-unknown-linux-musl }
+          - { os: macos-latest, target: aarch64-apple-darwin }
+          - { os: macos-latest, target: x86_64-apple-darwin }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - uses: Swatinem/rust-cache@v2
+      with:
+        key: ${{ matrix.target }}
+
+    - name: Install musl
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends musl-tools
+
+    - name: Add target
+      run: rustup target add ${{ matrix.target }}
+
+    - name: Build
+      run: cargo build --release --locked -p compcore --target ${{ matrix.target }}
+
+    - name: Smoke test
+      run: |
+        bin=target/${{ matrix.target }}/release/compcore
+        "$bin" complete 'git ch' | grep -q '^checkout'
+
+    # names without a version, so releases/latest/download/<name> always points at the newest
+    - name: Package
+      run: |
+        name=compcore-${{ matrix.target }}
+        tar -czf "$name.tar.gz" -C target/${{ matrix.target }}/release compcore -C "$GITHUB_WORKSPACE" LICENSE-MIT LICENSE-APACHE
+        shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256"
+
+    - uses: actions/upload-artifact@v5
+      with:
+        name: compcore-${{ matrix.target }}
+        path: compcore-${{ matrix.target }}.tar.gz*
+        if-no-files-found: error
+
+  release:
+
+    if: github.ref_type == 'tag'
+
+    needs: build
+
+    runs-on: ubuntu-26.04
+
+    permissions:
+      contents: write
+
+    steps:
+
+    - uses: actions/download-artifact@v5
+      with:
+        path: dist
+        merge-multiple: true
+
+    - name: Publish
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release create "$GITHUB_REF_NAME" dist/* \
+          --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes
