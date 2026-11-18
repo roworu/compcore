@@ -1,0 +1,32 @@
+{
+  "subcommands": [
+    { "name": ["plugin", "plugins"], "description": "Manage Claude Code plugins" },
+    { "name": ["stop", "kill"], "description": "Stop a background session" },
+    { "name": ["update", "upgrade"], "description": "Check for updates and install if available" }
+  ],
+  "options": [
+    {
+      "name": "--model",
+      "args": { "name": "model", "suggestions": ["fable", "opus", "sonnet", "haiku"] }
+    },
+    {
+      "name": "--permission-mode",
+      "args": {
+        "name": "mode",
+        "suggestions": ["acceptEdits", "auto", "bypassPermissions", "manual", "dontAsk", "plan"]
+      }
+    },
+    {
+      "name": "--effort",
+      "args": { "name": "level", "suggestions": ["low", "medium", "high", "xhigh", "max"] }
+    },
+    {
+      "name": "--output-format",
+      "args": { "name": "format", "suggestions": ["text", "json", "stream-json"] }
+    },
+    {
+      "name": "--input-format",
+      "args": { "name": "format", "suggestions": ["text", "stream-json"] }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "subcommands": [
+    {
+      "name": "check",
+      "priority": 80,
+      "args": { "name": "file", "template": "filepaths", "isVariadic": true, "isOptional": true },
+      "options": [
+        {
+          "name": "--output-format",
+          "args": {
+            "name": "format",
+            "suggestions": ["concise", "full", "json", "json-lines", "junit", "grouped", "github", "gitlab", "pylint", "rdjson", "azure", "sarif"]
+          }
+        },
+        {
+          "name": "--target-version",
+          "args": {
+            "name": "version",
+            "suggestions": ["py37", "py38", "py39", "py310", "py311", "py312", "py313", "py314", "py315"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "format",
+      "priority": 78,
+      "args": { "name": "file", "template": "filepaths", "isVariadic": true, "isOptional": true },
+      "options": [
+        {
+          "name": "--output-format",
+          "args": {
+            "name": "format",
+            "suggestions": ["concise", "full", "json", "json-lines", "junit", "grouped", "github", "gitlab", "pylint", "rdjson", "azure", "sarif"]
+          }
+        },
+        {
+          "name": "--target-version",
+          "args": {
+            "name": "version",
+            "suggestions": ["py37", "py38", "py39", "py310", "py311", "py312", "py313", "py314", "py315"]
+          }
+        }
+      ]
+    },
+    { "name": "rule", "priority": 76, "args": { "name": "rule", "isOptional": true } },
+    { "name": "config", "priority": 75, "args": { "name": "option", "isOptional": true } },
+    { "name": "clean", "priority": 75 },
+    {
+      "name": "analyze",
+      "priority": 75,
+      "subcommands": [
+        {
+          "name": "graph",
+          "args": { "name": "file", "template": "filepaths", "isVariadic": true, "isOptional": true },
+          "options": [
+            {
+              "name": "--direction",
+              "args": { "name": "direction", "suggestions": ["dependencies", "dependents"] }
+            }
+          ]
+        }
+      ]
+    },
+    { "name": "server", "priority": 75 },
+    { "name": "version", "priority": 75 }
+  ],
+  "options": [
+    {
+      "name": "--color",
+      "description": "Control when colored output is used",
+      "args": { "name": "when", "suggestions": ["auto", "always", "never"] }
+    }
+  ]
+}

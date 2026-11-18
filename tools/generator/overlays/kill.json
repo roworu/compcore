@@ -1,0 +1,12 @@
+{
+  "options": [
+    {
+      "name": ["-s", "--signal"],
+      "description": "Signal to send",
+      "args": {
+        "name": "signal",
+        "suggestions": ["HUP", "INT", "QUIT", "KILL", "USR1", "USR2", "TERM", "CONT", "STOP"]
+      }
+    }
+  ]
+}

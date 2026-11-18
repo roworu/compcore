@@ -1,0 +1,15 @@
+[workspace]
+members = ["crates/compcore-spec", "crates/compcore", "tools/generator"]
+default-members = ["crates/compcore-spec", "crates/compcore"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/roworu/compcore"
+authors = ["roworu"]
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

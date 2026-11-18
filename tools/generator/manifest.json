@@ -1,0 +1,592 @@
+{
+  "groups": {
+    "ubuntu": {
+      "image": "docker.io/library/ubuntu:26.04",
+      "install": "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3 python3-pip zip unzip xz-utils curl wget openssh-client rsync systemd procps psmisc iproute2 iputils-ping diffutils cron passwd file snapd flatpak less mount util-linux && pip install --break-system-packages --quiet uv ruff && cp /usr/bin/ping /usr/local/bin/ping",
+      "commands": [
+        {
+          "name": "uv",
+          "description": "Extremely fast Python package manager",
+          "sections": ["commands"],
+          "depth": 2,
+          "subArgs": {
+            "run": { "name": "command", "isVariadic": true },
+            "init": { "name": "path", "template": "folders", "isOptional": true },
+            "add": { "name": "package", "isVariadic": true },
+            "remove": { "name": "package", "isVariadic": true },
+            "venv": { "name": "path", "template": "folders", "isOptional": true },
+            "build": { "name": "source", "template": "folders", "isOptional": true },
+            "publish": { "name": "file", "template": "filepaths", "isVariadic": true },
+            "pip install": { "name": "package", "isVariadic": true },
+            "pip uninstall": { "name": "package", "isVariadic": true },
+            "pip show": { "name": "package", "isVariadic": true },
+            "pip compile": { "name": "file", "template": "filepaths", "isVariadic": true },
+            "pip sync": { "name": "file", "template": "filepaths", "isVariadic": true },
+            "tool run": { "name": "command", "isVariadic": true },
+            "tool install": { "name": "package", "isVariadic": true },
+            "tool upgrade": { "name": "package", "isVariadic": true },
+            "tool uninstall": { "name": "package", "isVariadic": true },
+            "python install": { "name": "version", "isVariadic": true },
+            "python uninstall": { "name": "version", "isVariadic": true },
+            "python pin": { "name": "version" },
+            "python find": { "name": "version" }
+          },
+          "overlay": "uv.json"
+        },
+        {
+          "name": "ruff",
+          "description": "Extremely fast Python linter and formatter",
+          "sections": ["commands"],
+          "depth": 2,
+          "top": ["check", "format", "rule", "config", "clean", "analyze", "server", "version"],
+          "overlay": "ruff.json"
+        },
+        {
+          "name": "apt",
+          "description": "Debian and Ubuntu package manager",
+          "top": ["install", "remove", "update", "upgrade", "search", "show", "list", "purge", "autoremove"],
+          "persistent": true,
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "reinstall": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "remove": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "purge": { "name": "package", "isVariadic": true },
+            "show": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "source": { "name": "package", "isVariadic": true },
+            "download": { "name": "package", "isVariadic": true },
+            "changelog": { "name": "package", "isVariadic": true },
+            "build-dep": { "name": "package", "isVariadic": true },
+            "depends": { "name": "package", "isVariadic": true },
+            "rdepends": { "name": "package", "isVariadic": true },
+            "policy": { "name": "package", "isVariadic": true },
+            "showpkg": { "name": "package", "isVariadic": true },
+            "showsrc": { "name": "package", "isVariadic": true },
+            "search": { "name": "pattern", "template": "packages:apt" },
+            "list": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "autoremove": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "satisfy": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "why": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "why-not": { "name": "package", "isVariadic": true, "template": "packages:apt" }
+          },
+          "overlay": "apt.json"
+        },
+        {
+          "name": "apt-get",
+          "description": "APT package handling utility",
+          "top": ["install", "remove", "update", "upgrade", "search", "show", "list", "purge", "autoremove"],
+          "persistent": true,
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "reinstall": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "remove": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "purge": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "show": { "name": "package", "isVariadic": true },
+            "source": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "download": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "changelog": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "build-dep": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "depends": { "name": "package", "isVariadic": true },
+            "rdepends": { "name": "package", "isVariadic": true },
+            "policy": { "name": "package", "isVariadic": true },
+            "showpkg": { "name": "package", "isVariadic": true },
+            "showsrc": { "name": "package", "isVariadic": true },
+            "search": { "name": "pattern" },
+            "autoremove": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "satisfy": { "name": "package", "isVariadic": true, "template": "packages:apt" }
+          },
+          "overlay": "apt.json"
+        },
+        {
+          "name": "apt-cache",
+          "description": "Query the APT package cache",
+          "top": ["install", "remove", "update", "upgrade", "search", "show", "list", "purge", "autoremove"],
+          "persistent": true,
+          "subArgs": {
+            "show": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "policy": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "showpkg": { "name": "package", "isVariadic": true },
+            "depends": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "rdepends": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "search": { "name": "pattern", "template": "packages:apt" },
+            "showsrc": { "name": "package", "isVariadic": true, "template": "packages:apt" },
+            "pkgnames": { "name": "package", "isVariadic": true, "template": "packages:apt" }
+          }
+        },
+        {
+          "name": "dpkg",
+          "description": "Debian package manager",
+          "args": { "name": "file", "template": "filepaths", "isVariadic": true, "isOptional": true },
+          "overlay": "dpkg.json"
+        },
+        {
+          "name": "snap",
+          "description": "Install and manage snaps",
+          "help": ["help", "--all"],
+          "sections": ["*"],
+          "depth": 1,
+          "top": ["install", "remove", "list", "find", "refresh", "info"],
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true },
+            "remove": { "name": "package", "isVariadic": true },
+            "info": { "name": "package", "isVariadic": true },
+            "refresh": { "name": "package", "isVariadic": true },
+            "revert": { "name": "package", "isVariadic": true },
+            "enable": { "name": "package", "isVariadic": true },
+            "disable": { "name": "package", "isVariadic": true },
+            "find": { "name": "pattern" }
+          }
+        },
+        {
+          "name": "flatpak",
+          "description": "Build, install and run applications and runtimes",
+          "sections": ["commands"],
+          "depth": 1,
+          "top": ["install", "run", "list", "update", "uninstall", "search", "info"],
+          "subArgs": {
+            "install": { "name": "ref", "isVariadic": true, "template": "packages:flatpak" },
+            "uninstall": { "name": "ref", "isVariadic": true, "template": "packages:flatpak" },
+            "run": { "name": "ref", "isVariadic": true, "template": "packages:flatpak" },
+            "info": { "name": "ref", "isVariadic": true, "template": "packages:flatpak" },
+            "update": { "name": "ref", "isVariadic": true, "template": "packages:flatpak" },
+            "search": { "name": "text" }
+          }
+        },
+        {
+          "name": "pip",
+          "description": "Python package installer",
+          "sections": ["commands"],
+          "depth": 1,
+          "top": ["install", "uninstall", "list", "show", "freeze"],
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "filepaths" },
+            "uninstall": { "name": "package", "isVariadic": true },
+            "show": { "name": "package", "isVariadic": true },
+            "download": { "name": "package", "isVariadic": true }
+          }
+        },
+        {
+          "name": "pip3",
+          "description": "Python package installer",
+          "sections": ["commands"],
+          "depth": 1,
+          "top": ["install", "uninstall", "list", "show", "freeze"],
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "filepaths" },
+            "uninstall": { "name": "package", "isVariadic": true },
+            "show": { "name": "package", "isVariadic": true },
+            "download": { "name": "package", "isVariadic": true }
+          }
+        },
+        {
+          "name": "systemctl",
+          "description": "Control the systemd system and service manager",
+          "sections": ["commands"],
+          "depth": 1,
+          "top": ["status", "start", "stop", "restart", "enable", "disable", "reload", "daemon-reload", "list-units"],
+          "persistent": true,
+          "subArgs": {
+            "start": { "name": "unit", "isVariadic": true },
+            "stop": { "name": "unit", "isVariadic": true },
+            "restart": { "name": "unit", "isVariadic": true },
+            "reload": { "name": "unit", "isVariadic": true },
+            "status": { "name": "unit", "isVariadic": true },
+            "enable": { "name": "unit", "isVariadic": true },
+            "disable": { "name": "unit", "isVariadic": true },
+            "is-active": { "name": "unit", "isVariadic": true },
+            "is-enabled": { "name": "unit", "isVariadic": true },
+            "mask": { "name": "unit", "isVariadic": true },
+            "unmask": { "name": "unit", "isVariadic": true },
+            "cat": { "name": "unit", "isVariadic": true },
+            "edit": { "name": "unit", "isVariadic": true },
+            "kill": { "name": "unit", "isVariadic": true },
+            "try-restart": { "name": "unit", "isVariadic": true },
+            "reload-or-restart": { "name": "unit", "isVariadic": true },
+            "show": { "name": "unit", "isVariadic": true }
+          }
+        },
+        {
+          "name": "journalctl",
+          "description": "Print log entries from the systemd journal",
+          "args": { "name": "match", "isOptional": true, "isVariadic": true }
+        },
+        {
+          "name": "hostnamectl",
+          "description": "Query or change the system hostname",
+          "sections": ["commands"],
+          "depth": 1,
+          "persistent": true
+        },
+        {
+          "name": "timedatectl",
+          "description": "Query or change the system time and date",
+          "sections": ["commands"],
+          "depth": 1,
+          "persistent": true
+        },
+        { "name": "cat", "description": "Concatenate files and print them" },
+        {
+          "name": "chmod",
+          "description": "Change file mode bits",
+          "args": [
+            { "name": "mode" },
+            { "name": "file", "template": "filepaths", "isVariadic": true }
+          ]
+        },
+        {
+          "name": "chown",
+          "description": "Change file owner and group",
+          "args": [
+            { "name": "owner[:group]" },
+            { "name": "file", "template": "filepaths", "isVariadic": true }
+          ]
+        },
+        {
+          "name": "chgrp",
+          "description": "Change group ownership",
+          "args": [
+            { "name": "group" },
+            { "name": "file", "template": "filepaths", "isVariadic": true }
+          ]
+        },
+        { "name": "ln", "description": "Make links between files" },
+        { "name": "touch", "description": "Change file timestamps, create empty files" },
+        { "name": "head", "description": "Print the first lines of files" },
+        { "name": "tail", "description": "Print the last lines of files" },
+        {
+          "name": "grep",
+          "description": "Print lines that match patterns",
+          "args": [
+            { "name": "pattern" },
+            { "name": "file", "template": "filepaths", "isVariadic": true }
+          ],
+          "overlay": "color.json"
+        },
+        {
+          "name": "sed",
+          "description": "Stream editor for filtering and transforming text",
+          "args": [
+            { "name": "script" },
+            { "name": "file", "template": "filepaths", "isVariadic": true }
+          ]
+        },
+        { "name": "tar", "description": "Archive files" },
+        { "name": "gzip", "description": "Compress or expand files" },
+        { "name": "gunzip", "description": "Expand gzip files" },
+        { "name": "xz", "description": "Compress or expand .xz and .lzma files" },
+        { "name": "zip", "description": "Package and compress files", "help": ["-h"] },
+        { "name": "unzip", "description": "List, test and extract zip archives", "help": ["-h"] },
+        {
+          "name": "curl",
+          "description": "Transfer data from or to a server",
+          "help": ["--help", "all"],
+          "args": { "name": "url", "isVariadic": true }
+        },
+        { "name": "wget", "description": "Download files from the web", "args": { "name": "url", "isVariadic": true } },
+        { "name": "rsync", "description": "Fast, versatile file copying tool" },
+        {
+          "name": "kill",
+          "description": "Send a signal to processes",
+          "args": { "name": "pid", "isVariadic": true },
+          "overlay": "kill.json"
+        },
+        { "name": "killall", "description": "Kill processes by name", "args": { "name": "name", "isVariadic": true } },
+        { "name": "ps", "description": "Report a snapshot of the current processes", "help": ["--help", "all"] },
+        { "name": "free", "description": "Display the amount of free and used memory" },
+        { "name": "df", "description": "Report file system space usage" },
+        { "name": "du", "description": "Estimate file space usage" },
+        { "name": "diff", "description": "Compare files line by line" },
+        { "name": "sort", "description": "Sort lines of text files" },
+        { "name": "uniq", "description": "Report or omit repeated lines" },
+        { "name": "wc", "description": "Print line, word and byte counts" },
+        { "name": "cut", "description": "Remove sections from each line of files" },
+        { "name": "tr", "description": "Translate or delete characters" },
+        { "name": "tee", "description": "Copy standard input to files and standard output" },
+        { "name": "stat", "description": "Display file or file system status" },
+        { "name": "file", "description": "Determine file type" },
+        { "name": "mktemp", "description": "Create a temporary file or directory" },
+        { "name": "rmdir", "description": "Remove empty directories" },
+        { "name": "realpath", "description": "Print the resolved path" },
+        { "name": "basename", "description": "Strip directory and suffix from file names" },
+        { "name": "dirname", "description": "Strip the last component from file names" },
+        { "name": "date", "description": "Print or set the system date and time" },
+        { "name": "uname", "description": "Print system information" },
+        { "name": "ls", "description": "List directory contents", "overlay": "color.json" },
+        { "name": "cp", "description": "Copy files and directories" },
+        { "name": "mv", "description": "Move or rename files" },
+        { "name": "rm", "description": "Remove files or directories" },
+        { "name": "mkdir", "description": "Make directories" },
+        { "name": "ss", "description": "Investigate sockets" },
+        { "name": "ping", "description": "Send ICMP echo requests to network hosts", "args": { "name": "destination" } },
+        {
+          "name": "mount",
+          "description": "Mount a filesystem",
+          "args": [
+            { "name": "device", "isOptional": true, "template": "filepaths" },
+            { "name": "mountpoint", "isOptional": true, "template": "folders" }
+          ]
+        },
+        {
+          "name": "umount",
+          "description": "Unmount filesystems",
+          "args": { "name": "mountpoint", "template": "folders", "isVariadic": true }
+        },
+        { "name": "useradd", "description": "Create a new user", "args": { "name": "login" } },
+        { "name": "usermod", "description": "Modify a user account", "args": { "name": "login" } },
+        { "name": "userdel", "description": "Delete a user account", "args": { "name": "login" } },
+        { "name": "passwd", "description": "Change a user password", "args": { "name": "login", "isOptional": true } },
+        { "name": "su", "description": "Run a shell as another user", "args": { "name": "user", "isOptional": true } },
+        { "name": "crontab", "description": "Maintain crontab files", "args": { "name": "file", "template": "filepaths", "isOptional": true } },
+        { "name": "git", "handwritten": true },
+        { "name": "ssh", "handwritten": true },
+        { "name": "scp", "handwritten": true },
+        { "name": "find", "handwritten": true },
+        { "name": "less", "handwritten": true },
+        { "name": "ip", "handwritten": true },
+        { "name": "man", "handwritten": true },
+        { "name": "which", "handwritten": true },
+        { "name": "cd", "handwritten": true },
+        { "name": "docker", "handwritten": true },
+        { "name": "cargo", "handwritten": true },
+        { "name": "npm", "handwritten": true },
+        { "name": "7z", "handwritten": true },
+        { "name": "brew", "handwritten": true },
+        { "name": "bzip2", "handwritten": true },
+        { "name": "fastfetch", "handwritten": true },
+        { "name": "htop", "handwritten": true },
+        { "name": "obsidian-cli", "handwritten": true },
+        { "name": "podman", "handwritten": true },
+        { "name": "powerprofilesctl", "handwritten": true },
+        { "name": "python", "handwritten": true },
+        { "name": "python3", "handwritten": true },
+        { "name": "zstd", "handwritten": true }
+      ]
+    },
+    "node": {
+      "image": "docker.io/library/ubuntu:26.04",
+      "install": "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nodejs npm && npm install -g @anthropic-ai/claude-code opencode-ai",
+      "commands": [
+        {
+          "name": "claude",
+          "description": "Anthropic's agentic coding tool",
+          "sections": ["commands"],
+          "depth": 2,
+          "top": ["mcp", "agents", "auth", "plugin", "update", "doctor"],
+          "args": { "name": "prompt", "isOptional": true },
+          "overlay": "claude.json"
+        },
+        {
+          "name": "opencode",
+          "description": "AI coding agent for the terminal",
+          "depth": 2,
+          "persistent": true,
+          "args": { "name": "project", "template": "folders", "isOptional": true },
+          "overlay": "opencode.json"
+        }
+      ]
+    },
+    "fedora": {
+      "image": "docker.io/library/fedora:latest",
+      "install": "true",
+      "commands": [
+        {
+          "name": "dnf",
+          "description": "Fedora and RHEL package manager",
+          "sections": ["command", "subcommand"],
+          "top": ["install", "remove", "upgrade", "search", "info", "list", "autoremove"],
+          "persistent": true,
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "remove": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "reinstall": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "downgrade": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "upgrade": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "info": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "list": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "provides": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "swap": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "search": { "name": "pattern", "template": "packages:dnf" },
+            "distro-sync": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "debuginfo-install": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "autoremove": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "repoquery": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "download": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "changelog": { "name": "package", "isVariadic": true, "template": "packages:dnf" }
+          }
+        },
+        {
+          "name": "yum",
+          "description": "Fedora and RHEL package manager",
+          "sections": ["command", "subcommand"],
+          "top": ["install", "remove", "upgrade", "search", "info", "list", "autoremove"],
+          "persistent": true,
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "remove": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "reinstall": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "downgrade": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "upgrade": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "info": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "list": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "provides": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "swap": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "search": { "name": "pattern", "template": "packages:dnf" },
+            "distro-sync": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "debuginfo-install": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "autoremove": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "repoquery": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "download": { "name": "package", "isVariadic": true, "template": "packages:dnf" },
+            "changelog": { "name": "package", "isVariadic": true, "template": "packages:dnf" }
+          }
+        },
+        {
+          "name": "rpm",
+          "description": "RPM package manager",
+          "args": { "name": "package", "isVariadic": true, "template": "filepaths" }
+        }
+      ]
+    },
+    "arch": {
+      "image": "docker.io/library/archlinux:latest",
+      "install": "true",
+      "commands": [
+        {
+          "name": "pacman",
+          "description": "Arch Linux package manager",
+          "args": { "name": "package", "isVariadic": true, "template": "packages:pacman" },
+          "extraHelp": [
+            ["-D", "--help"],
+            ["-F", "--help"],
+            ["-Q", "--help"],
+            ["-R", "--help"],
+            ["-S", "--help"],
+            ["-T", "--help"],
+            ["-U", "--help"]
+          ],
+          "overlay": "pacman.json"
+        }
+      ]
+    },
+    "opensuse": {
+      "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "install": "true",
+      "commands": [
+        {
+          "name": "zypper",
+          "description": "openSUSE package manager",
+          "help": ["help"],
+          "sections": ["*"],
+          "subHelp": ["help", "{}"],
+          "depth": 1,
+          "top": ["install", "remove", "update", "search", "info", "refresh", "dist-upgrade"],
+          "persistent": true,
+          "subArgs": {
+            "install": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "remove": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "info": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "update": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "search": { "name": "pattern", "template": "packages:zypper" },
+            "removeptf": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "verify": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "source-install": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "patch": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "dist-upgrade": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "what-provides": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "addlock": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "removelock": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "download": { "name": "package", "isVariadic": true, "template": "packages:zypper" },
+            "source-download": { "name": "package", "isVariadic": true, "template": "packages:zypper" }
+          }
+        }
+      ]
+    },
+    "alpine": {
+      "image": "docker.io/library/alpine:latest",
+      "install": "true",
+      "commands": [
+        {
+          "name": "apk",
+          "description": "Alpine package manager",
+          "sections": ["*"],
+          "depth": 1,
+          "top": ["add", "del", "update", "upgrade", "search", "info"],
+          "persistent": true,
+          "subArgs": {
+            "add": { "name": "package", "isVariadic": true, "template": "packages:apk" },
+            "del": { "name": "package", "isVariadic": true, "template": "packages:apk" },
+            "info": { "name": "package", "isVariadic": true, "template": "packages:apk" },
+            "fetch": { "name": "package", "isVariadic": true, "template": "packages:apk" },
+            "fix": { "name": "package", "isVariadic": true, "template": "packages:apk" },
+            "policy": { "name": "package", "isVariadic": true, "template": "packages:apk" },
+            "search": { "name": "pattern", "template": "packages:apk" },
+            "upgrade": { "name": "package", "isVariadic": true, "template": "packages:apk" }
+          }
+        }
+      ]
+    },
+    "llama": {
+      "image": "docker.io/library/archlinux:latest",
+      "install": "pacman -Sy --noconfirm --quiet llama-cpp",
+      "commands": [
+        { "name": "llama-cli", "description": "Run llama.cpp models from the command line", "args": { "name": "prompt", "isOptional": true } },
+        { "name": "llama-completion", "description": "Generate text from a llama.cpp model", "args": { "name": "prompt", "isOptional": true } },
+        {
+          "name": "llama-quantize",
+          "description": "Quantize GGUF models",
+          "args": [
+            { "name": "input", "template": "filepaths" },
+            { "name": "output", "template": "filepaths", "isOptional": true },
+            {
+              "name": "type",
+              "suggestions": [
+                "Q1_0", "Q2_0", "Q4_0", "Q4_1", "MXFP4_MOE", "Q5_0", "Q5_1", "IQ2_XXS", "IQ2_XS",
+                "IQ2_S", "IQ2_M", "IQ1_S", "IQ1_M", "TQ1_0", "TQ2_0", "Q2_K", "Q2_K_S", "IQ3_XXS",
+                "IQ3_S", "IQ3_M", "Q3_K", "IQ3_XS", "Q3_K_S", "Q3_K_M", "Q3_K_L", "IQ4_NL",
+                "IQ4_XS", "Q4_K", "Q4_K_S", "Q4_K_M", "Q5_K", "Q5_K_S", "Q5_K_M", "Q6_K", "Q8_0",
+                "F16", "BF16", "F32"
+              ]
+            },
+            { "name": "threads", "isOptional": true }
+          ]
+        },
+        {
+          "name": "llama-gguf",
+          "description": "Read and write GGUF tensor data",
+          "args": [
+            { "name": "file", "template": "filepaths" },
+            { "name": "mode", "suggestions": ["r", "w"] },
+            { "name": "n", "isOptional": true }
+          ]
+        },
+        { "name": "llama-server", "description": "OpenAI-compatible HTTP server for llama.cpp models" },
+        { "name": "llama-bench", "description": "Benchmark llama.cpp model performance" },
+        { "name": "llama-gguf-hash", "description": "Hash the tensors of a GGUF file", "args": { "name": "file", "template": "filepaths", "isVariadic": true } },
+        { "name": "llama-gguf-split", "description": "Split and merge GGUF model files", "args": { "name": "file", "template": "filepaths", "isVariadic": true } },
+        { "name": "llama-imatrix", "description": "Compute importance matrices for quantization" },
+        { "name": "llama-perplexity", "description": "Measure a model's perplexity" },
+        { "name": "llama-embedding", "description": "Generate embeddings for text" },
+        { "name": "llama-tokenize", "description": "Tokenize text with a llama.cpp model" },
+        { "name": "llama-mtmd-cli", "description": "Run multimodal llama.cpp models from the command line" },
+        { "name": "llama-batched", "description": "Generate batched completions" },
+        { "name": "llama-batched-bench", "description": "Benchmark batched generation" },
+        { "name": "llama-lookup", "description": "Generate text with lookup decoding" },
+        { "name": "llama-lookup-create", "description": "Create a lookup decoding cache" },
+        { "name": "llama-lookup-merge", "description": "Merge lookup cache files", "args": { "name": "file", "template": "filepaths", "isVariadic": true } },
+        { "name": "llama-lookup-stats", "description": "Show lookup cache statistics" },
+        { "name": "llama-passkey", "description": "Run the passkey retrieval test" },
+        { "name": "llama-retrieval", "description": "Run the retrieval test" },
+        { "name": "llama-speculative", "description": "Generate text with speculative decoding" },
+        { "name": "llama-speculative-simple", "description": "Generate text with simple speculative decoding" },
+        { "name": "llama-tts", "description": "Run text to speech with a llama.cpp model" },
+        { "name": "llama-idle", "description": "Keep a model loaded without generating" },
+        { "name": "llama-eval-callback", "description": "Evaluate a model with a callback" },
+        { "name": "llama-fit-params", "description": "Fit model parameters to the available memory" },
+        { "name": "llama-lookahead", "description": "Generate text with lookahead decoding" },
+        { "name": "llama-parallel", "description": "Run parallel generation" },
+        { "name": "llama-diffusion-cli", "description": "Run diffusion models from the command line" },
+        { "name": "llama-finetune", "description": "Fine-tune a model" },
+        { "name": "llama-debug", "description": "Print model debug information" },
+        { "name": "llama-results", "description": "Show stored benchmark results" }
+      ]
+    }
+  }
+}

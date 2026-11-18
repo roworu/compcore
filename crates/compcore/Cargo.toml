@@ -1,0 +1,16 @@
+[package]
+name = "compcore"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "shell completion engine: fig-style specs, PATH, files and help probing"
+publish = false
+
+[dependencies]
+compcore-spec = { path = "../compcore-spec" }
+# the aws spec is shipped gzipped
+flate2 = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json_lenient = "0.2"

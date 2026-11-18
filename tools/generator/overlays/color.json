@@ -1,0 +1,14 @@
+{
+  "options": [
+    {
+      "name": "--color",
+      "description": "Colorize the output",
+      "args": { "name": "when", "isOptional": true, "suggestions": ["always", "auto", "never"] }
+    },
+    {
+      "name": "--colour",
+      "description": "Colorize the output",
+      "args": { "name": "when", "isOptional": true, "suggestions": ["always", "auto", "never"] }
+    }
+  ]
+}

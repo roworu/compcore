@@ -1,0 +1,11 @@
+{
+  "subcommands": [
+    { "name": "run", "priority": 80 },
+    { "name": "auth", "priority": 76 },
+    { "name": "providers", "priority": 76 },
+    { "name": "mcp", "priority": 76 },
+    { "name": "models", "priority": 75 },
+    { "name": "session", "priority": 75 },
+    { "name": "agent", "priority": 75 }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "options": [
+    { "name": ["-i", "--install"], "description": "Install .deb files", "args": { "name": "deb", "template": "filepaths", "isVariadic": true } },
+    { "name": "--unpack", "description": "Unpack .deb files without configuring them", "args": { "name": "deb", "template": "filepaths", "isVariadic": true } },
+    { "name": ["-A", "--record-avail"], "description": "Record .deb files as available", "args": { "name": "deb", "template": "filepaths", "isVariadic": true } },
+    { "name": "--configure", "description": "Configure unpacked packages", "args": { "name": "package", "isVariadic": true } },
+    { "name": "--triggers-only", "description": "Process only pending triggers", "args": { "name": "package", "isVariadic": true } },
+    { "name": ["-r", "--remove"], "description": "Remove packages, keep their config files", "args": { "name": "package", "isVariadic": true } },
+    { "name": ["-P", "--purge"], "description": "Remove packages and their config files", "args": { "name": "package", "isVariadic": true } },
+    { "name": ["-L", "--listfiles"], "args": { "name": "package", "isVariadic": true } },
+    { "name": ["-s", "--status"], "args": { "name": "package", "isVariadic": true } },
+    { "name": ["-S", "--search"], "args": { "name": "pattern" } }
+  ]
+}

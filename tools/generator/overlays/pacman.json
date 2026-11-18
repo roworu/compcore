@@ -1,0 +1,17 @@
+{
+  "options": [
+    { "name": ["-S", "--sync"], "description": "Install packages, -Syu updates the system", "priority": 76 },
+    { "name": ["-R", "--remove"], "description": "Remove packages", "priority": 75 },
+    { "name": ["-Q", "--query"], "description": "Query installed packages", "priority": 75 },
+    {
+      "name": ["-U", "--upgrade"],
+      "description": "Install package files",
+      "args": { "name": "file", "template": "filepaths", "isVariadic": true }
+    },
+    { "name": ["-F", "--files"], "description": "Query the files database" },
+    { "name": ["-D", "--database"], "description": "Operate on the package database" },
+    { "name": ["-T", "--deptest"], "description": "Check dependencies" },
+    { "name": ["-V", "--version"], "description": "Show the version" },
+    { "name": ["-h", "--help"], "description": "Show help, with an operation its options" }
+  ]
+}

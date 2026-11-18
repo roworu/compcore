@@ -1,0 +1,16 @@
+{
+  "subcommands": [
+    { "name": "run", "priority": 80 },
+    { "name": "add", "priority": 78 },
+    { "name": "sync", "priority": 77 },
+    { "name": "lock", "priority": 76 },
+    { "name": "init", "priority": 75 },
+    { "name": "venv", "priority": 75 },
+    { "name": "pip", "priority": 75 },
+    { "name": "tool", "priority": 75 },
+    { "name": "python", "priority": 75 }
+  ],
+  "options": [
+    { "name": "--project", "args": { "name": "project", "template": "folders" } }
+  ]
+}
