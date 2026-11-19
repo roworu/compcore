@@ -14,15 +14,15 @@ every release has static binaries for linux (x86_64, aarch64; musl, so any distr
 (aarch64, x86_64):
 
 ```sh
-target=x86_64-unknown-linux-musl   # or aarch64-unknown-linux-musl, aarch64-apple-darwin, ...
-curl -fsSL "https://github.com/roworu/compcore/releases/latest/download/compcore-$target.tar.gz" |
-  tar -xz -C ~/.local/bin compcore | chmod +x ~/.local/bin/compcore
+mkdir -p ~/.local/bin
+curl -fsSL "https://github.com/roworu/compcore/releases/latest/download/compcore-$(uname -s)-$(uname -m).tar.gz" |
+  tar -xz -C ~/.local/bin compcore
 ```
 
 ## build
 
 ```sh
-# fmt, build, clippy and tests, in podman
+# fmt, clippy and tests, in podman
 sh scripts/build-test.sh
 # a static binary for frontends that run it
 podman run --rm -v "$PWD":/src:Z compcore-dev \

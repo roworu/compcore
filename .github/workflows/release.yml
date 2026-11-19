@@ -58,11 +58,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # musl links statically, so one linux binary runs on every distro
-          - { os: ubuntu-26.04, target: x86_64-unknown-linux-musl }
-          - { os: ubuntu-26.04-arm, target: aarch64-unknown-linux-musl }
-          - { os: macos-latest, target: aarch64-apple-darwin }
-          - { os: macos-latest, target: x86_64-apple-darwin }
+
+          - { os: ubuntu-26.04, target: x86_64-unknown-linux-musl, asset: Linux-x86_64 }
+          - { os: ubuntu-26.04-arm, target: aarch64-unknown-linux-musl, asset: Linux-aarch64 }
+          - { os: macos-latest, target: aarch64-apple-darwin, asset: Darwin-arm64 }
+          - { os: macos-latest, target: x86_64-apple-darwin, asset: Darwin-x86_64 }
 
     runs-on: ${{ matrix.os }}
 
@@ -94,14 +94,14 @@ jobs:
     # names without a version, so releases/latest/download/<name> always points at the newest
     - name: Package
       run: |
-        name=compcore-${{ matrix.target }}
+        name=compcore-${{ matrix.asset }}
         tar -czf "$name.tar.gz" -C target/${{ matrix.target }}/release compcore -C "$GITHUB_WORKSPACE" LICENSE-MIT LICENSE-APACHE
         shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256"
 
     - uses: actions/upload-artifact@v5
       with:
-        name: compcore-${{ matrix.target }}
-        path: compcore-${{ matrix.target }}.tar.gz*
+        name: compcore-${{ matrix.asset }}
+        path: compcore-${{ matrix.asset }}.tar.gz*
         if-no-files-found: error
 
   release:
