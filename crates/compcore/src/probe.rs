@@ -81,9 +81,9 @@ impl Prober {
         if let Some(cached) = self.read_cache(command, meta) {
             return cached;
         }
-        let mut spec = self.run(command, program, &["--help".into()], cwd);
+        let mut spec = self.run_as(command, command, program, &["--help".into()], cwd);
         if !spec.usable() {
-            let short = self.run(command, program, &["-h".into()], cwd);
+            let short = self.run_as(command, command, program, &["-h".into()], cwd);
             if short.usable() {
                 spec = short;
             }
@@ -94,10 +94,6 @@ impl Prober {
         };
         self.write_cache(command, meta, &spec);
         spec
-    }
-
-    fn run(&self, command: &str, program: &Path, args: &[String], cwd: Option<&Path>) -> Spec {
-        self.run_as(command, command, program, args, cwd)
     }
 
     /// parse help whose command rows carry `prefix`, like yargs' `tool sub command`
@@ -217,7 +213,6 @@ impl Prober {
 
 /// the identity of an installed program: a version or a rebuild changes its metadata and
 /// so the cache key
-#[derive(Clone)]
 struct Meta {
     path: String,
     len: String,

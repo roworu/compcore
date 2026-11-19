@@ -1,7 +1,7 @@
 #!/bin/sh
-# fmt, build, clippy and tests of the workspace, inside the dev container
+# fmt, clippy and tests of the workspace, inside the dev container
 podman build -q -t compcore-dev - <"$(dirname "$0")/../Containerfile" &&
 	podman run --rm -v "${1:-$PWD}":/src:Z \
 		-v compcore-cargo-registry:/usr/local/cargo/registry \
 		-v compcore-cargo-git:/usr/local/cargo/git \
-		compcore-dev sh -c 'cargo fmt --all --check && cargo build --workspace && cargo clippy --workspace --all-targets -- -D warnings && cargo test --workspace'
+		compcore-dev sh -c 'cargo fmt --all --check && cargo clippy --workspace --all-targets -- -D warnings && cargo test --workspace'

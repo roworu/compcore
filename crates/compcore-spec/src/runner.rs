@@ -16,15 +16,6 @@ pub struct Limits {
     pub max_bytes: usize,
 }
 
-impl Default for Limits {
-    fn default() -> Self {
-        Limits {
-            timeout: Duration::from_secs(2),
-            max_bytes: 512 * 1024,
-        }
-    }
-}
-
 /// stdout and stderr of `program args`, in a plain locale and without a pager. empty when
 /// the program can't be started, prints nothing or runs past the deadline
 pub fn run_help(program: &Path, args: &[String], cwd: Option<&Path>, limits: Limits) -> String {
@@ -112,7 +103,11 @@ mod tests {
 
     #[test]
     fn both_streams_are_kept() {
-        let out = sh("echo out; echo err >&2", Limits::default());
+        let limits = Limits {
+            timeout: Duration::from_secs(2),
+            max_bytes: 1000,
+        };
+        let out = sh("echo out; echo err >&2", limits);
         assert!(out.contains("out"), "{out}");
         assert!(out.contains("err"), "{out}");
     }

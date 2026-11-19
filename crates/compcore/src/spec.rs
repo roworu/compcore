@@ -32,16 +32,6 @@ macro_rules! spec {
     };
 }
 
-macro_rules! gz_spec {
-    ($name:literal) => {
-        Bundled {
-            name: $name,
-            bytes: include_bytes!(concat!("../../../specs/", $name, ".json.gz")),
-            gzip: true,
-        }
-    };
-}
-
 /// specs compcore brings, by the command they are for. sh tools/generator/generate.sh makes
 /// most of them, see docs/COMPLETIONS.md
 const BUNDLED: &[Bundled] = &[
@@ -50,7 +40,11 @@ const BUNDLED: &[Bundled] = &[
     spec!("apt-cache"),
     spec!("apt-get"),
     spec!("apt"),
-    gz_spec!("aws"),
+    Bundled {
+        name: "aws",
+        bytes: include_bytes!("../../../specs/aws.json.gz"),
+        gzip: true,
+    },
     spec!("basename"),
     spec!("brew"),
     spec!("bzip2"),

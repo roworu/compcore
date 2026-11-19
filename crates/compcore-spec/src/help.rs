@@ -60,7 +60,6 @@ pub fn parse_help_as(name: &str, help: &str, prefix: &str, hints: &Hints) -> Spe
         ..Default::default()
     };
     let mut section = String::new();
-    let mut options: Vec<Opt> = Vec::new();
     let mut seen_options = std::collections::HashSet::new();
     let mut seen_commands = std::collections::HashSet::new();
     let mut ix = 0;
@@ -93,14 +92,13 @@ pub fn parse_help_as(name: &str, help: &str, prefix: &str, hints: &Hints) -> Spe
             let names: Vec<String> = option.name.all().to_vec();
             if names.iter().any(|name| !seen_options.contains(name)) {
                 seen_options.extend(names);
-                options.push(option);
+                spec.options.push(option);
             }
             ix += consumed + 1;
             continue;
         }
         ix += 1;
     }
-    spec.options = options;
     spec.args = positional_args(&lines);
     spec
 }
@@ -137,11 +135,8 @@ fn positional_args(lines: &[String]) -> Args {
     let usage = lines
         .iter()
         .find(|line| line.trim().to_lowercase().starts_with("usage:"))
-        .map(|line| match line.split_once(':') {
-            Some((_, rest)) => rest,
-            None => "",
-        });
-    Args::Many(usage.map(usage_args).unwrap_or_default())
+        .and_then(|line| line.split_once(':'));
+    Args::Many(usage.map(|(_, rest)| usage_args(rest)).unwrap_or_default())
 }
 
 fn usage_args(usage: &str) -> Vec<Arg> {
@@ -281,16 +276,14 @@ fn header_text(line: &str) -> Option<&str> {
 fn summary(lines: &[String]) -> Option<String> {
     for line in lines {
         let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
         if header_text(line).is_some() {
             return None;
         }
-        if trimmed.to_lowercase().starts_with("usage") {
-            continue;
-        }
-        if trimmed.starts_with('-') || display_indent(line) > 0 {
+        if trimmed.is_empty()
+            || trimmed.to_lowercase().starts_with("usage")
+            || trimmed.starts_with('-')
+            || display_indent(line) > 0
+        {
             continue;
         }
         if let Some(sentence) = sentence(trimmed) {
@@ -337,14 +330,15 @@ fn split_row(line: &str) -> (usize, &str, Option<usize>, &str) {
     (indent, stripped.trim_end(), None, "")
 }
 
-/// the description lines that wrap below a row, and how many they are
+/// a row's description with the lines that wrap below it, and how many those are
 fn continuation(
     lines: &[String],
     ix: usize,
+    description: &str,
     description_column: Option<usize>,
     indent: usize,
 ) -> (String, usize) {
-    let mut text = String::new();
+    let mut text = description.to_string();
     let mut consumed = 0;
     for line in &lines[ix + 1..] {
         let trimmed = line.trim();
@@ -381,11 +375,7 @@ fn parse_option(line: &str, lines: &[String], ix: usize) -> Option<(Opt, usize)>
     if names.is_empty() {
         return None;
     }
-    let (wrapped, consumed) = continuation(lines, ix, description_column, indent);
-    let description = match wrapped.is_empty() {
-        true => description.to_string(),
-        false => format!("{description} {wrapped}"),
-    };
+    let (description, consumed) = continuation(lines, ix, description, description_column, indent);
     let mut option = Opt {
         name: match names.as_slice() {
             [one] => Names::One(one.clone()),
@@ -414,14 +404,11 @@ fn parse_option(line: &str, lines: &[String], ix: usize) -> Option<(Opt, usize)>
             .iter()
             .find(|name| name.starts_with("--"))
             .unwrap_or(&names[0]);
-        let mut arg = Arg {
+        option.args = Args::One(Box::new(Arg {
             name: Some(long.trim_start_matches('-').to_string()),
+            is_variadic: description.to_lowercase().contains("[array]"),
             ..Default::default()
-        };
-        if description.to_lowercase().contains("[array]") {
-            arg.is_variadic = true;
-        }
-        option.args = Args::One(Box::new(arg));
+        }));
     }
     Some((option, consumed))
 }
@@ -464,79 +451,55 @@ fn parse_names(head: &str) -> (Vec<String>, Option<Attached>, bool) {
             repeatable = true;
             ix += 3;
         }
-        match chars.get(ix).copied() {
-            Some('=') => {
+        if chars.get(ix) == Some(&'=') {
+            ix += 1;
+            let start = ix;
+            while ix < chars.len()
+                && !chars[ix].is_whitespace()
+                && !matches!(chars[ix], ',' | '|' | ']' | '>')
+            {
                 ix += 1;
-                let start = ix;
-                while ix < chars.len()
-                    && !chars[ix].is_whitespace()
-                    && !matches!(chars[ix], ',' | '|' | ']' | '>')
-                {
-                    ix += 1;
-                }
-                set_attached(&mut attached, chars[start..ix].iter().collect(), false);
             }
-            Some('[') => {
-                if let Some(close) = matching(&chars, ix, '[', ']') {
-                    let inner: String = chars[ix + 1..close].iter().collect();
-                    let (optional, value) = match inner.strip_prefix('=') {
-                        Some(value) => (true, value.to_string()),
-                        None => (true, inner),
-                    };
-                    set_attached(&mut attached, value, optional);
-                    ix = close + 1;
-                }
-            }
+            set_attached(&mut attached, chars[start..ix].iter().collect(), false);
+            continue;
+        }
+        // the argument follows the name directly or after spaces, a bare word only after spaces
+        let mut next = ix;
+        while next < chars.len() && chars[next].is_whitespace() {
+            next += 1;
+        }
+        match chars.get(next).copied() {
             Some('<') => {
-                if let Some((end, value)) = delimited(&chars, ix, '<', '>') {
+                if let Some((end, value)) = delimited(&chars, next, '<', '>') {
                     set_attached(&mut attached, value, false);
                     ix = end;
                 }
             }
-            Some(c) if c.is_whitespace() => {
-                let mut next = ix;
-                while next < chars.len() && chars[next].is_whitespace() {
-                    next += 1;
+            Some('[') => {
+                if let Some(close) = matching(&chars, next, '[', ']') {
+                    let inner: String = chars[next + 1..close].iter().collect();
+                    let value = inner.strip_prefix('=').unwrap_or(&inner).to_string();
+                    set_attached(&mut attached, value, true);
+                    ix = close + 1;
                 }
-                match chars.get(next).copied() {
-                    Some('<') => {
-                        if let Some((end, value)) = delimited(&chars, next, '<', '>') {
-                            set_attached(&mut attached, value, false);
-                            ix = end;
-                        }
-                    }
-                    Some('[') => {
-                        if let Some(close) = matching(&chars, next, '[', ']') {
-                            let inner: String = chars[next + 1..close].iter().collect();
-                            let (optional, value) = match inner.strip_prefix('=') {
-                                Some(value) => (true, value.to_string()),
-                                None => (true, inner),
-                            };
-                            set_attached(&mut attached, value, optional);
-                            ix = close + 1;
-                        }
-                    }
-                    Some(c) if c != '-' && c != ',' && !c.is_whitespace() => {
-                        let start = next;
-                        let mut end = next;
-                        while end < chars.len()
-                            && !chars[end].is_whitespace()
-                            && !matches!(chars[end], ',' | '|' | ']' | '>')
-                        {
-                            end += 1;
-                        }
-                        let mut value: String = chars[start..end].iter().collect();
-                        if let Some(stripped) = value.strip_suffix("...") {
-                            value = stripped.to_string();
-                            if let Some(attached) = &mut attached {
-                                attached.variadic = true;
-                            }
-                        }
-                        set_attached(&mut attached, value, false);
-                        ix = end;
-                    }
-                    _ => {}
+            }
+            Some(c) if next > ix && c != '-' && c != ',' => {
+                let mut end = next;
+                while end < chars.len()
+                    && !chars[end].is_whitespace()
+                    && !matches!(chars[end], ',' | '|' | ']' | '>')
+                {
+                    end += 1;
                 }
+                let mut value: String = chars[next..end].iter().collect();
+                if let Some(stripped) = value.strip_suffix("...") {
+                    value = stripped.to_string();
+                    if let Some(attached) = &mut attached {
+                        attached.variadic = true;
+                    }
+                }
+                set_attached(&mut attached, value, false);
+                ix = end;
             }
             _ => {}
         }
@@ -576,11 +539,12 @@ fn delimited(chars: &[char], at: usize, open: char, close: char) -> Option<(usiz
 }
 
 fn set_attached(attached: &mut Option<Attached>, raw: String, optional: bool) {
-    if attached.is_none() && !raw.trim().is_empty() {
+    let raw = raw.trim();
+    if attached.is_none() && !raw.is_empty() {
         *attached = Some(Attached {
-            raw: raw.trim().to_string(),
+            raw: raw.to_string(),
             optional,
-            variadic: raw.trim().ends_with("..."),
+            variadic: raw.ends_with("..."),
         });
     }
 }
@@ -739,12 +703,10 @@ fn strip_annotations(text: &str) -> String {
                 | "required"
                 | "optional"
         );
-        if drop {
-            ix = end + 1;
-        } else {
+        if !drop {
             out.extend(&chars[ix..=end]);
-            ix = end + 1;
         }
+        ix = end + 1;
     }
     out
 }
@@ -829,11 +791,7 @@ fn parse_subcommand(
         false => (head, description, description_column),
     };
     let names = command_names(head)?;
-    let (wrapped, consumed) = continuation(lines, ix, description_column, indent);
-    let description = match wrapped.is_empty() {
-        true => description.to_string(),
-        false => format!("{description} {wrapped}"),
-    };
+    let (description, consumed) = continuation(lines, ix, description, description_column, indent);
     let sub = Spec {
         name: match names.as_slice() {
             [one] => Names::One(one.clone()),
