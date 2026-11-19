@@ -2,6 +2,7 @@
 //!
 //!   compcore serve [--specs DIR] [--no-probe]
 //!   compcore complete [--specs DIR] [--no-probe] LINE
+//!   compcore --help | --version
 
 use std::{
     io::{BufReader, Write},
@@ -12,6 +13,7 @@ use std::{
 use compcore::{Request, Specs, complete, serve};
 
 const USAGE: &str = "usage: compcore serve|complete [options] [LINE]
+       compcore --help|--version
   serve        answer requests on stdin, see the serve module docs for the protocol
   complete     print the candidates for LINE, completed at its end, one per line
   --specs DIR  <command>.json specs that go over the bundled ones
@@ -23,6 +25,17 @@ fn main() -> ExitCode {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     };
+    match mode.as_str() {
+        "-h" | "--help" => {
+            println!("{USAGE}");
+            return ExitCode::SUCCESS;
+        }
+        "-V" | "--version" => {
+            println!("compcore {}", env!("CARGO_PKG_VERSION"));
+            return ExitCode::SUCCESS;
+        }
+        _ => {}
+    }
     let mut dir = None;
     let mut probe_help = true;
     let mut line = None;

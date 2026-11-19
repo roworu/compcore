@@ -36,6 +36,7 @@ install -Dm755 target/podman/x86_64-unknown-linux-musl/release/compcore ~/.local
 compcore complete 'git ch'          # candidates of a line, one per line
 compcore serve [--specs DIR]        # answer frontends on stdin/stdout
                [--no-probe]         # never run `<command> --help`
+compcore --version                  # or --help
 ```
 
 the protocol and how specs are made and refreshed are in `docs/COMPLETIONS.md`.
