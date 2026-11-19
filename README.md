@@ -16,7 +16,7 @@ every release has static binaries for linux (x86_64, aarch64; musl, so any distr
 ```sh
 target=x86_64-unknown-linux-musl   # or aarch64-unknown-linux-musl, aarch64-apple-darwin, ...
 curl -fsSL "https://github.com/roworu/compcore/releases/latest/download/compcore-$target.tar.gz" |
-  tar -xz -C ~/.local/bin compcore
+  tar -xz -C ~/.local/bin compcore | chmod +x ~/.local/bin/compcore
 ```
 
 ## build
