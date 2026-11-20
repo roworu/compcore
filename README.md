@@ -8,17 +8,6 @@ it knows nothing about how candidates are shown, so any frontend can draw them: 
 program links the `compcore` crate, anything else (a shell script, an editor plugin, another
 language) runs `compcore serve` and talks to it over stdin and stdout.
 
-## install
-
-every release has static binaries for linux (x86_64, aarch64; musl, so any distro) and macos
-(aarch64, x86_64):
-
-```sh
-mkdir -p ~/.local/bin
-curl -fsSL "https://github.com/roworu/compcore/releases/latest/download/compcore-$(uname -s)-$(uname -m).tar.gz" |
-  tar -xz -C ~/.local/bin compcore
-```
-
 ## build
 
 ```sh
@@ -39,10 +28,7 @@ compcore serve [--specs DIR]        # answer frontends on stdin/stdout
 compcore --version                  # or --help
 ```
 
+or could be used bundled, for example: https://github.com/roworu/compui
+
 the protocol and how specs are made and refreshed are in `docs/COMPLETIONS.md`.
 
-## release
-
-bump `version` in `crates/compcore/Cargo.toml`, then push a matching tag (`v0.2.0`).
-`.github/workflows/release.yml` lints and tests, builds every target, smoke tests each binary
-and publishes them with sha256 sums. run the workflow by hand to only build them.
