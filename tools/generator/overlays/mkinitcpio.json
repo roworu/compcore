@@ -1,0 +1,10 @@
+{
+  "options": [
+    {
+      "name": ["-k", "--kernel"],
+      "description": "Use specified kernel version",
+      "args": { "name": "kernelver" }
+    },
+    { "name": ["-p", "--preset"], "args": { "name": "preset" } }
+  ]
+}

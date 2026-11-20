@@ -19,6 +19,39 @@ pub struct Limits {
 /// stdout and stderr of `program args`, in a plain locale and without a pager. empty when
 /// the program can't be started, prints nothing or runs past the deadline
 pub fn run_help(program: &Path, args: &[String], cwd: Option<&Path>, limits: Limits) -> String {
+    let Some((_, stdout, stderr)) = run(program, args, cwd, limits) else {
+        return String::new();
+    };
+    if stdout.is_empty() && stderr.is_empty() {
+        return String::new();
+    }
+    format!(
+        "{}\n{}",
+        String::from_utf8_lossy(&stdout),
+        String::from_utf8_lossy(&stderr)
+    )
+}
+
+/// stdout of `program args` when it succeeds within the limits, for listings like `docker
+/// image ls`
+pub fn run_stdout(
+    program: &Path,
+    args: &[String],
+    cwd: Option<&Path>,
+    limits: Limits,
+) -> Option<String> {
+    let (success, stdout, _) = run(program, args, cwd, limits)?;
+    success.then(|| String::from_utf8_lossy(&stdout).into_owned())
+}
+
+/// whether `program args` succeeded, and its capped stdout and stderr. none when it can't be
+/// started or runs past the deadline
+fn run(
+    program: &Path,
+    args: &[String],
+    cwd: Option<&Path>,
+    limits: Limits,
+) -> Option<(bool, Vec<u8>, Vec<u8>)> {
     let mut command = Command::new(program);
     command
         .args(args)
@@ -40,38 +73,32 @@ pub fn run_help(program: &Path, args: &[String], cwd: Option<&Path>, limits: Lim
     if let Some(cwd) = cwd {
         command.current_dir(cwd);
     }
-    let Ok(mut child) = command.spawn() else {
-        return String::new();
-    };
+    let mut child = command.spawn().ok()?;
     let (Some(stdout), Some(stderr)) = (child.stdout.take(), child.stderr.take()) else {
         child.kill().ok();
-        return String::new();
+        return None;
     };
     let (out_tx, out_rx) = mpsc::channel();
     let (err_tx, err_rx) = mpsc::channel();
     read_capped(stdout, limits.max_bytes, out_tx);
     read_capped(stderr, limits.max_bytes, err_tx);
     let deadline = Instant::now() + limits.timeout;
-    while let Ok(None) = child.try_wait() {
-        if Instant::now() > deadline {
-            child.kill().ok();
-            child.wait().ok();
-            return String::new();
+    let status = loop {
+        match child.try_wait() {
+            Ok(Some(status)) => break status,
+            Ok(None) if Instant::now() <= deadline => std::thread::sleep(Duration::from_millis(10)),
+            _ => {
+                child.kill().ok();
+                child.wait().ok();
+                return None;
+            }
         }
-        std::thread::sleep(Duration::from_millis(10));
-    }
+    };
     // a program left behind by the one asked may hold the pipes; completion must not wait
     let wait = deadline.saturating_duration_since(Instant::now());
     let stdout = out_rx.recv_timeout(wait).unwrap_or_default();
     let stderr = err_rx.recv_timeout(wait).unwrap_or_default();
-    if stdout.is_empty() && stderr.is_empty() {
-        return String::new();
-    }
-    format!(
-        "{}\n{}",
-        String::from_utf8_lossy(&stdout),
-        String::from_utf8_lossy(&stderr)
-    )
+    Some((status.success(), stdout, stderr))
 }
 
 /// read a pipe on its own thread, keeping at most `max_bytes` so a chatty program can't fill
@@ -132,5 +159,23 @@ mod tests {
         );
         assert!(out.is_empty());
         assert!(started.elapsed() < Duration::from_secs(2));
+    }
+
+    #[test]
+    fn listings_keep_stdout_of_a_successful_run_only() {
+        let limits = Limits {
+            timeout: Duration::from_secs(2),
+            max_bytes: 1000,
+        };
+        let run = |script: &str| {
+            let args = ["-c".to_string(), script.to_string()];
+            run_stdout(Path::new("sh"), &args, None, limits)
+        };
+        assert_eq!(run("echo out; echo err >&2").as_deref(), Some("out\n"));
+        assert_eq!(run("echo out; exit 1"), None);
+        assert_eq!(
+            run_stdout(Path::new("/nonexistent"), &[], None, limits),
+            None
+        );
     }
 }

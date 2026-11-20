@@ -50,6 +50,10 @@ jobs:
     - name: Test
       run: cargo test -p compcore -p compcore-spec --locked
 
+    # latency and memory budgets of the e2e tests hold for release builds only
+    - name: Budgets
+      run: cargo test --release -p compcore --test e2e --locked
+
   build:
 
     needs: check

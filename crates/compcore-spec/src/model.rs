@@ -228,11 +228,17 @@ impl Templates {
 
     /// the package manager of a `packages:<manager>` template
     pub fn packages(&self) -> Option<&str> {
-        let all = match self {
+        self.all()
+            .iter()
+            .find_map(|one| one.strip_prefix("packages:"))
+    }
+
+    /// every template, like `filepaths` or `git:branches`
+    pub fn all(&self) -> &[String] {
+        match self {
             Templates::One(one) => std::slice::from_ref(one),
             Templates::Many(many) => many.as_slice(),
-        };
-        all.iter().find_map(|one| one.strip_prefix("packages:"))
+        }
     }
 }
 

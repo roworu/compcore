@@ -1,0 +1,823 @@
+{
+  "name": "paru",
+  "description": "AUR helper and pacman wrapper",
+  "options": [
+    {
+      "name": [
+        "-c",
+        "--clean"
+      ],
+      "description": "Remove unneeded dependencies"
+    },
+    {
+      "name": "--gendb",
+      "description": "Generates development package DB used for updating"
+    },
+    {
+      "name": "--repo",
+      "description": "Assume targets are from the repositories"
+    },
+    {
+      "name": "--pkgbuilds",
+      "description": "Assume targets are from pkgbuild repositories"
+    },
+    {
+      "name": [
+        "-a",
+        "--aur"
+      ],
+      "description": "Assume targets are from the AUR"
+    },
+    {
+      "name": "--mode",
+      "description": "Sets where paru looks for targets",
+      "args": {
+        "name": "mode"
+      }
+    },
+    {
+      "name": "--interactive",
+      "description": "Enable interactive package selection for -S, -R, -Ss and -Qs"
+    },
+    {
+      "name": "--aururl",
+      "description": "Set an alternative AUR URL",
+      "args": {
+        "name": "url"
+      }
+    },
+    {
+      "name": "--aurrpcur",
+      "description": "Set an alternative URL for the AUR /rpc endpoint",
+      "args": {
+        "name": "url"
+      }
+    },
+    {
+      "name": "--clonedir",
+      "description": "Directory used to download and run PKGBUILDs",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": "--makepkg",
+      "description": "Makepkg command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--mflags",
+      "description": "Pass arguments to makepkg",
+      "args": {
+        "name": "flags"
+      }
+    },
+    {
+      "name": "--pacman",
+      "description": "Pacman command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--git",
+      "description": "Git command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--gitflags",
+      "description": "Pass arguments to git",
+      "args": {
+        "name": "flags"
+      }
+    },
+    {
+      "name": "--sudo",
+      "description": "Sudo command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--sudoflags",
+      "description": "Pass arguments to sudo",
+      "args": {
+        "name": "flags"
+      }
+    },
+    {
+      "name": "--pkgctl",
+      "description": "Pkgctl command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--bat",
+      "description": "Bat command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--batflags",
+      "description": "Pass arguments to bat",
+      "args": {
+        "name": "flags"
+      }
+    },
+    {
+      "name": "--gpg",
+      "description": "Gpg command to use",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--gpgflags",
+      "description": "Pass arguments to gpg",
+      "args": {
+        "name": "flags"
+      }
+    },
+    {
+      "name": "--fm",
+      "description": "File manager to use for PKGBUILD review",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--fmflags",
+      "description": "Pass arguments to file manager",
+      "args": {
+        "name": "flags"
+      }
+    },
+    {
+      "name": "--completioninterval",
+      "description": "Time in days to refresh completion cache",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--sortby",
+      "description": "Sort AUR results by a specific field during search",
+      "args": {
+        "name": "field"
+      }
+    },
+    {
+      "name": "--searchby",
+      "description": "Search for packages using a specified field",
+      "args": {
+        "name": "field"
+      }
+    },
+    {
+      "name": "--limit",
+      "description": "Limits the number of items returned in a search",
+      "args": {
+        "name": "limit"
+      }
+    },
+    {
+      "name": [
+        "-x",
+        "--regex"
+      ],
+      "description": "Enable regex for aur search"
+    },
+    {
+      "name": "--skipreview",
+      "description": "Skip the review process"
+    },
+    {
+      "name": "--review",
+      "description": "Don't skip the review process"
+    },
+    {
+      "name": [
+        "--upgrademenu",
+        "--noupgrademenu"
+      ],
+      "description": "Show interactive menu to skip upgrades"
+    },
+    {
+      "name": [
+        "--removemake",
+        "--noremovemake"
+      ],
+      "description": "Remove makedepends after install"
+    },
+    {
+      "name": [
+        "--cleanafter",
+        "--nocleanafter"
+      ],
+      "description": "Remove package sources after install"
+    },
+    {
+      "name": [
+        "--rebuild",
+        "--norebuild"
+      ],
+      "description": "Always build target packages"
+    },
+    {
+      "name": [
+        "--redownload",
+        "--noredownload"
+      ],
+      "description": "Always download PKGBUILDs of targets"
+    },
+    {
+      "name": [
+        "--pgpfetch",
+        "--nopgpfetch"
+      ],
+      "description": "Prompt to import PGP keys from PKGBUILDs"
+    },
+    {
+      "name": [
+        "--useask",
+        "--nouseask"
+      ],
+      "description": "Automatically resolve conflicts using pacman's ask flag"
+    },
+    {
+      "name": [
+        "--savechanges",
+        "--nosavechanges"
+      ],
+      "description": "Commit changes to pkgbuilds made during review"
+    },
+    {
+      "name": [
+        "--newsonupgrade",
+        "--nonewsonupgrade"
+      ],
+      "description": "Print new news during sysupgrade"
+    },
+    {
+      "name": [
+        "--combinedupgrade",
+        "--nocombinedupgrade"
+      ],
+      "description": "Refresh then perform the repo and AUR upgrade together"
+    },
+    {
+      "name": [
+        "--batchinstall",
+        "--nobatchinstall"
+      ],
+      "description": "Build multiple AUR packages then install them together"
+    },
+    {
+      "name": [
+        "--provides",
+        "--noprovides"
+      ],
+      "description": "Look for matching providers when searching for packages"
+    },
+    {
+      "name": [
+        "--devel",
+        "--nodevel"
+      ],
+      "description": "Check development packages during sysupgrade"
+    },
+    {
+      "name": [
+        "--installdebug",
+        "--noinstalldebug"
+      ],
+      "description": "Also install debug packages when a package provides them"
+    },
+    {
+      "name": [
+        "--sudoloop",
+        "--nosudoloop"
+      ],
+      "description": "Loop sudo calls in the background to avoid timeout"
+    },
+    {
+      "name": [
+        "--chroot",
+        "--nochroot"
+      ],
+      "description": "Build packages in a chroot"
+    },
+    {
+      "name": [
+        "--failfast",
+        "--nofailfast"
+      ],
+      "description": "Exit as soon as building an AUR package fails"
+    },
+    {
+      "name": [
+        "--keepsrc",
+        "--nokeepsrc"
+      ],
+      "description": "Keep src/ and pkg/ dirs after building packages"
+    },
+    {
+      "name": [
+        "--sign",
+        "--nosign"
+      ],
+      "description": "Sign packages with gpg"
+    },
+    {
+      "name": [
+        "--signdb",
+        "--nosigndb"
+      ],
+      "description": "Sign databases with gpg"
+    },
+    {
+      "name": [
+        "--localrepo",
+        "--nolocalrepo"
+      ],
+      "description": "Build packages into a local repo"
+    },
+    {
+      "name": "--nocheck",
+      "description": "Don't resolve checkdepends or run the check function"
+    },
+    {
+      "name": "--rootchrootpkgs",
+      "description": "Packages to install in the root chroot"
+    },
+    {
+      "name": "--develsuffixes",
+      "description": "Suffixes used to decide if a package is a devel package"
+    },
+    {
+      "name": "--ignoredevel",
+      "description": "Ignore devel upgrades for specified packages"
+    },
+    {
+      "name": "--minimumreleaseage",
+      "description": "Minimum age of AUR package changes",
+      "args": {
+        "name": "duration"
+      }
+    },
+    {
+      "name": "--nominimumreleaseage",
+      "description": "Disable the minimum release age check"
+    },
+    {
+      "name": "--minimumreleaseageexclude",
+      "description": "Exempt packages from the age check",
+      "args": {
+        "name": "packages"
+      }
+    },
+    {
+      "name": "--bottomup",
+      "description": "Shows AUR's packages first and then repository's"
+    },
+    {
+      "name": "--topdown",
+      "description": "Shows repository's packages first and then AUR's"
+    },
+    {
+      "name": "--auto",
+      "description": "Use bottom-up ordering for menus, top-down otherwise"
+    },
+    {
+      "name": [
+        "-c",
+        "--complete"
+      ],
+      "description": "Used for completions"
+    },
+    {
+      "name": [
+        "-s",
+        "--stats"
+      ],
+      "description": "Display system package statistics"
+    },
+    {
+      "name": [
+        "-w",
+        "--news"
+      ],
+      "description": "Print arch news"
+    },
+    {
+      "name": [
+        "-p",
+        "--print"
+      ],
+      "description": "Print pkgbuild to stdout"
+    },
+    {
+      "name": [
+        "-c",
+        "--comments"
+      ],
+      "description": "Print AUR comments for pkgbuild"
+    },
+    {
+      "name": [
+        "-s",
+        "--ssh"
+      ],
+      "description": "Clone package using SSH"
+    },
+    {
+      "name": [
+        "-i",
+        "--install"
+      ],
+      "description": "Install package as well as building"
+    },
+    {
+      "name": [
+        "-b",
+        "--dbpath"
+      ],
+      "description": "Set an alternate database location",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-k",
+        "--check"
+      ],
+      "description": "Test local database for validity (-kk for sync databases)"
+    },
+    {
+      "name": [
+        "-q",
+        "--quiet"
+      ],
+      "description": "Suppress output of success messages"
+    },
+    {
+      "name": [
+        "-r",
+        "--root"
+      ],
+      "description": "Set an alternate installation root",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-v",
+        "--verbose"
+      ],
+      "description": "Be verbose"
+    },
+    {
+      "name": "--arch",
+      "description": "Set an alternate architecture",
+      "args": {
+        "name": "arch"
+      }
+    },
+    {
+      "name": "--asdeps",
+      "description": "Mark packages as non-explicitly installed"
+    },
+    {
+      "name": "--asexplicit",
+      "description": "Mark packages as explicitly installed"
+    },
+    {
+      "name": "--cachedir",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": "--color",
+      "description": "Colorize the output",
+      "args": {
+        "name": "when"
+      }
+    },
+    {
+      "name": "--config",
+      "description": "Set an alternate configuration file",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--confirm",
+      "description": "Always ask for confirmation"
+    },
+    {
+      "name": "--debug",
+      "description": "Display debug messages"
+    },
+    {
+      "name": "--disable-download-timeout",
+      "description": "Use relaxed timeouts for download"
+    },
+    {
+      "name": "--disable-sandbox",
+      "description": "Disables all sandbox features used for the downloader process"
+    },
+    {
+      "name": "--disable-sandbox-filesystem",
+      "description": "Disables the filesystem part of the downloader process sandbox"
+    },
+    {
+      "name": "--disable-sandbox-syscalls",
+      "description": "Disables the syscalls part of the downloader process sandbox"
+    },
+    {
+      "name": "--gpgdir",
+      "description": "Set an alternate home directory for GnuPG",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--hookdir",
+      "description": "Set an alternate hook location",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": "--logfile",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--noconfirm",
+      "description": "Do not ask for any confirmation"
+    },
+    {
+      "name": "--sysroot",
+      "description": "Operate on a mounted guest system (root-only)"
+    },
+    {
+      "name": [
+        "-l",
+        "--list"
+      ],
+      "description": "List the files owned by the queried package"
+    },
+    {
+      "name": [
+        "-y",
+        "--refresh"
+      ],
+      "description": "Download fresh package databases from the server (-yy to force a refresh even if up to date)"
+    },
+    {
+      "name": "--machinereadable",
+      "description": "Produce machine-readable output"
+    },
+    {
+      "name": [
+        "-d",
+        "--deps"
+      ],
+      "description": "List packages installed as dependencies [filter]"
+    },
+    {
+      "name": [
+        "-e",
+        "--explicit"
+      ],
+      "description": "List packages explicitly installed [filter]"
+    },
+    {
+      "name": [
+        "-g",
+        "--groups"
+      ],
+      "description": "View all members of a package group"
+    },
+    {
+      "name": [
+        "-m",
+        "--foreign"
+      ],
+      "description": "List installed packages not found in sync db(s) [filter]"
+    },
+    {
+      "name": [
+        "-n",
+        "--native"
+      ],
+      "description": "List installed packages only found in sync db(s) [filter]"
+    },
+    {
+      "name": [
+        "-o",
+        "--owns"
+      ],
+      "description": "Query the package that owns <file>",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-t",
+        "--unrequired"
+      ],
+      "description": "List packages not (optionally) required by any package (-tt to ignore optdepends) [filter]"
+    },
+    {
+      "name": [
+        "-u",
+        "--upgrades"
+      ],
+      "description": "List outdated packages [filter]"
+    },
+    {
+      "name": "--assume-installed",
+      "description": "Add a virtual package to satisfy dependencies",
+      "args": {
+        "name": "package"
+      }
+    },
+    {
+      "name": "--dbonly",
+      "description": "Only modify database entries, not package files"
+    },
+    {
+      "name": "--noprogressbar",
+      "description": "Do not show a progress bar when downloading files"
+    },
+    {
+      "name": "--noscriptlet",
+      "description": "Do not execute the install scriptlet if one exists"
+    },
+    {
+      "name": "--print-format",
+      "description": "Specify how the targets should be printed",
+      "args": {
+        "name": "string"
+      }
+    },
+    {
+      "name": "--ignore",
+      "description": "Ignore a package upgrade (can be used more than once)",
+      "args": {
+        "name": "pkg"
+      }
+    },
+    {
+      "name": "--ignoregroup",
+      "description": "Ignore a group upgrade (can be used more than once)",
+      "args": {
+        "name": "grp"
+      }
+    },
+    {
+      "name": "--needed",
+      "description": "Do not reinstall up to date packages"
+    },
+    {
+      "name": "--overwrite",
+      "description": "Overwrite conflicting files (can be used more than once)",
+      "args": {
+        "name": "glob"
+      }
+    },
+    {
+      "name": [
+        "-S",
+        "--sync"
+      ],
+      "description": "Install packages, -Syu updates the system",
+      "priority": 76
+    },
+    {
+      "name": [
+        "-R",
+        "--remove"
+      ],
+      "description": "Remove packages",
+      "priority": 75
+    },
+    {
+      "name": [
+        "-Q",
+        "--query"
+      ],
+      "description": "Query installed packages",
+      "priority": 75
+    },
+    {
+      "name": [
+        "-G",
+        "--getpkgbuild"
+      ],
+      "description": "Download PKGBUILDs",
+      "priority": 70
+    },
+    {
+      "name": [
+        "-U",
+        "--upgrade"
+      ],
+      "description": "Install package files",
+      "args": {
+        "name": "file",
+        "template": "filepaths",
+        "isVariadic": true
+      }
+    },
+    {
+      "name": [
+        "-F",
+        "--files"
+      ],
+      "description": "Query the files database"
+    },
+    {
+      "name": [
+        "-D",
+        "--database"
+      ],
+      "description": "Operate on the package database"
+    },
+    {
+      "name": [
+        "-T",
+        "--deptest"
+      ],
+      "description": "Check dependencies"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Show the version"
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Show help, with an operation its options"
+    },
+    {
+      "name": [
+        "-B",
+        "--build"
+      ],
+      "description": "Build PKGBUILDs in folders",
+      "args": {
+        "name": "dir",
+        "template": "folders",
+        "isVariadic": true
+      }
+    },
+    {
+      "name": [
+        "-P",
+        "--show"
+      ],
+      "description": "Show paru information"
+    }
+  ],
+  "args": {
+    "name": "package",
+    "template": "packages:pacman",
+    "isVariadic": true
+  }
+}

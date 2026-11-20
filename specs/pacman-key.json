@@ -1,0 +1,148 @@
+{
+  "name": "pacman-key",
+  "description": "Manage pacman's keyring",
+  "options": [
+    {
+      "name": [
+        "-a",
+        "--add"
+      ],
+      "description": "Add the specified keys (empty for stdin)"
+    },
+    {
+      "name": [
+        "-d",
+        "--delete"
+      ],
+      "description": "Remove the specified keyids"
+    },
+    {
+      "name": [
+        "-e",
+        "--export"
+      ],
+      "description": "Export the specified or all keyids"
+    },
+    {
+      "name": [
+        "-f",
+        "--finger"
+      ],
+      "description": "List fingerprint for specified or all keyids"
+    },
+    {
+      "name": [
+        "-l",
+        "--list-keys"
+      ],
+      "description": "List the specified or all keys"
+    },
+    {
+      "name": [
+        "-r",
+        "--recv-keys"
+      ],
+      "description": "Fetch the specified keyids"
+    },
+    {
+      "name": [
+        "-u",
+        "--updatedb"
+      ],
+      "description": "Update the trustdb of pacman"
+    },
+    {
+      "name": [
+        "-v",
+        "--verify"
+      ],
+      "description": "Verify the file(s) specified by the signature(s)"
+    },
+    {
+      "name": "--edit-key",
+      "description": "Present a menu for key management task on keyids"
+    },
+    {
+      "name": "--import",
+      "description": "Imports pubring.gpg from dir(s)"
+    },
+    {
+      "name": "--import-trustdb",
+      "description": "Imports ownertrust values from trustdb.gpg in dir(s)"
+    },
+    {
+      "name": "--init",
+      "description": "Ensure the keyring is properly initialized"
+    },
+    {
+      "name": "--list-sigs",
+      "description": "List keys and their signatures"
+    },
+    {
+      "name": "--lsign-key",
+      "description": "Locally sign the specified keyid"
+    },
+    {
+      "name": "--populate",
+      "description": "Reload the default keys from the (given) keyrings in '/usr/share/pacman/keyrings'"
+    },
+    {
+      "name": "--refresh-keys",
+      "description": "Update specified or all keys from a keyserver"
+    },
+    {
+      "name": "--verbose",
+      "description": "Show extra information"
+    },
+    {
+      "name": "--config",
+      "description": "Use an alternate config file (instead of '/etc/pacman.conf')",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--gpgdir",
+      "description": "Set an alternate directory for GnuPG (instead of '/etc/pacman.d/gnupg')",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": "--populate-from",
+      "description": "Set an alternate directory for --populate (instead of '/usr/share/pacman/keyrings')",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": "--keyserver",
+      "description": "Specify a keyserver to use if necessary",
+      "args": {
+        "name": "server-url"
+      }
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Show this help message and exit"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Show program version"
+    }
+  ],
+  "args": {
+    "name": "key",
+    "isOptional": true,
+    "isVariadic": true
+  }
+}

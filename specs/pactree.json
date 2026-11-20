@@ -1,0 +1,125 @@
+{
+  "name": "pactree",
+  "description": "Show a package's dependency tree",
+  "options": [
+    {
+      "name": [
+        "-a",
+        "--ascii"
+      ],
+      "description": "Use ASCII characters for tree formatting"
+    },
+    {
+      "name": [
+        "-c",
+        "--color"
+      ],
+      "description": "Colorize output"
+    },
+    {
+      "name": "--config",
+      "description": "Set an alternate configuration file",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-b",
+        "--dbpath"
+      ],
+      "description": "Set an alternate database location",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--debug",
+      "description": "Display debug messages"
+    },
+    {
+      "name": [
+        "-d",
+        "--depth"
+      ],
+      "description": "Limit the depth of recursion",
+      "args": {
+        "name": "value"
+      }
+    },
+    {
+      "name": "--gpgdir",
+      "description": "Set an alternate home directory for GnuPG",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-g",
+        "--graph"
+      ],
+      "description": "Generate output for graphviz's dot"
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Display this help message and exit"
+    },
+    {
+      "name": [
+        "-l",
+        "--linear"
+      ],
+      "description": "Enable linear output"
+    },
+    {
+      "name": [
+        "-o",
+        "--optional"
+      ],
+      "description": "Controls at which depth to stop printing optional deps (-1 for no limit)",
+      "args": {
+        "name": "depth",
+        "isOptional": true
+      }
+    },
+    {
+      "name": [
+        "-r",
+        "--reverse"
+      ],
+      "description": "List packages that depend on the named package"
+    },
+    {
+      "name": [
+        "-s",
+        "--sync"
+      ],
+      "description": "Search sync databases instead of local"
+    },
+    {
+      "name": [
+        "-u",
+        "--unique"
+      ],
+      "description": "Show dependencies with no duplicates (implies -l)"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Display version information and exit"
+    }
+  ],
+  "args": {
+    "name": "package",
+    "template": "packages:pacman"
+  }
+}

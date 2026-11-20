@@ -93,7 +93,8 @@
      "name": "--network",
      "description": "Connect to a network",
      "args": {
-      "name": "network"
+      "name": "network",
+      "template": "docker:networks"
      }
     },
     {
@@ -123,7 +124,8 @@
    ],
    "args": [
     {
-     "name": "image"
+     "name": "image",
+     "template": "docker:images"
     },
     {
      "name": "command",
@@ -192,7 +194,8 @@
    ],
    "args": [
     {
-     "name": "container"
+     "name": "container",
+     "template": "docker:containers"
     },
     {
      "name": "command",
@@ -335,14 +338,16 @@
     }
    ],
    "args": {
-    "name": "image"
+    "name": "image",
+    "template": "docker:images"
    }
   },
   {
    "name": "push",
    "description": "Upload an image",
    "args": {
-    "name": "image"
+    "name": "image",
+    "template": "docker:images"
    }
   },
   {
@@ -382,7 +387,8 @@
     }
    ],
    "args": {
-    "name": "container"
+    "name": "container",
+    "template": "docker:containers"
    },
    "priority": 70
   },
@@ -407,7 +413,8 @@
    ],
    "args": {
     "name": "container",
-    "isVariadic": true
+    "isVariadic": true,
+    "template": "docker:containers"
    }
   },
   {
@@ -427,7 +434,8 @@
    ],
    "args": {
     "name": "container",
-    "isVariadic": true
+    "isVariadic": true,
+    "template": "docker:containers"
    }
   },
   {
@@ -435,7 +443,8 @@
    "description": "Restart containers",
    "args": {
     "name": "container",
-    "isVariadic": true
+    "isVariadic": true,
+    "template": "docker:containers"
    }
   },
   {
@@ -459,7 +468,8 @@
    ],
    "args": {
     "name": "container",
-    "isVariadic": true
+    "isVariadic": true,
+    "template": "docker:containers"
    }
   },
   {
@@ -476,7 +486,8 @@
    ],
    "args": {
     "name": "image",
-    "isVariadic": true
+    "isVariadic": true,
+    "template": "docker:images"
    }
   },
   {
@@ -496,7 +507,11 @@
    ],
    "args": {
     "name": "object",
-    "isVariadic": true
+    "isVariadic": true,
+    "template": [
+     "docker:containers",
+     "docker:images"
+    ]
    }
   },
   {
@@ -518,7 +533,8 @@
    "description": "Give an image another name",
    "args": [
     {
-     "name": "source"
+     "name": "source",
+     "template": "docker:images"
     },
     {
      "name": "target"
@@ -779,14 +795,16 @@
      "description": "Remove networks",
      "args": {
       "name": "network",
-      "isVariadic": true
+      "isVariadic": true,
+      "template": "docker:networks"
      }
     },
     {
      "name": "inspect",
      "description": "Show a network",
      "args": {
-      "name": "network"
+      "name": "network",
+      "template": "docker:networks"
      }
     }
    ]
@@ -812,7 +830,8 @@
      "description": "Remove volumes",
      "args": {
       "name": "volume",
-      "isVariadic": true
+      "isVariadic": true,
+      "template": "docker:volumes"
      }
     },
     {
@@ -823,7 +842,8 @@
      "name": "inspect",
      "description": "Show a volume",
      "args": {
-      "name": "volume"
+      "name": "volume",
+      "template": "docker:volumes"
      }
     }
    ]

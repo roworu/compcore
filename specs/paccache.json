@@ -1,0 +1,144 @@
+{
+  "name": "paccache",
+  "description": "Clean the pacman package cache",
+  "options": [
+    {
+      "name": [
+        "-d",
+        "--dryrun"
+      ],
+      "description": "Perform a dry run, only finding candidate packages"
+    },
+    {
+      "name": [
+        "-m",
+        "--move"
+      ],
+      "description": "Move candidate packages to \"dir\"",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-r",
+        "--remove"
+      ],
+      "description": "Remove candidate packages"
+    },
+    {
+      "name": [
+        "-a",
+        "--arch"
+      ],
+      "description": "Scan for \"arch\"",
+      "args": {
+        "name": "arch"
+      }
+    },
+    {
+      "name": [
+        "-c",
+        "--cachedir"
+      ],
+      "description": "Scan \"dir\" for packages. can be used more than once",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-f",
+        "--force"
+      ],
+      "description": "Apply force to mv(1) and rm(1) operations"
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Display this help message and exit"
+    },
+    {
+      "name": [
+        "-i",
+        "--ignore"
+      ],
+      "description": "Ignore \"pkgs\", comma-separated",
+      "args": {
+        "name": "pkgs"
+      }
+    },
+    {
+      "name": [
+        "-k",
+        "--keep"
+      ],
+      "description": "Keep \"num\" of each package in the cache",
+      "args": {
+        "name": "num"
+      }
+    },
+    {
+      "name": "--min-atime",
+      "args": {
+        "name": "time"
+      }
+    },
+    {
+      "name": "--min-mtime",
+      "description": "Keep packages with an atime/mtime that is not older than the time given, even if this means keeping more than specified through the '--keep' option",
+      "args": {
+        "name": "time"
+      }
+    },
+    {
+      "name": "--nocolor",
+      "description": "Do not colorize output"
+    },
+    {
+      "name": [
+        "-z",
+        "--null"
+      ],
+      "description": "Use null delimiters for candidate names (only with -v and -vv)"
+    },
+    {
+      "name": [
+        "-q",
+        "--quiet"
+      ],
+      "description": "Minimize output"
+    },
+    {
+      "name": [
+        "-u",
+        "--uninstalled"
+      ],
+      "description": "Target uninstalled packages"
+    },
+    {
+      "name": [
+        "-v",
+        "--verbose"
+      ],
+      "description": "Increase verbosity. specify up to 3 times"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Display version information and exit"
+    }
+  ],
+  "args": {
+    "name": "package",
+    "template": "packages:pacman",
+    "isOptional": true,
+    "isVariadic": true
+  }
+}

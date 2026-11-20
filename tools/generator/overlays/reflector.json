@@ -1,0 +1,7 @@
+{
+  "args": [],
+  "options": [
+    { "name": "--save", "args": { "name": "filepath", "template": "filepaths" } },
+    { "name": "--sort", "args": { "name": "field" } }
+  ]
+}

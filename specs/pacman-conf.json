@@ -1,0 +1,80 @@
+{
+  "name": "pacman-conf",
+  "description": "Query pacman's configuration",
+  "options": [
+    {
+      "name": [
+        "-c",
+        "--config"
+      ],
+      "description": "Set an alternate configuration file",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-R",
+        "--rootdir"
+      ],
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-S",
+        "--sysroot"
+      ],
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-r",
+        "--repo"
+      ],
+      "description": "Query options for a specific repo",
+      "args": {
+        "name": "remote"
+      }
+    },
+    {
+      "name": [
+        "-v",
+        "--verbose"
+      ],
+      "description": "Always show directive names"
+    },
+    {
+      "name": [
+        "-l",
+        "--repo-list"
+      ],
+      "description": "List configured repositories"
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Display this help information"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Display version information"
+    }
+  ],
+  "args": {
+    "name": "directive",
+    "isOptional": true,
+    "isVariadic": true
+  }
+}

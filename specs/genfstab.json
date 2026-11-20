@@ -1,0 +1,44 @@
+{
+  "name": "genfstab",
+  "description": "Generate fstab entries for a root",
+  "options": [
+    {
+      "name": "-f",
+      "description": "Restrict output to mountpoints matching the prefix FILTER",
+      "args": {
+        "name": "filter"
+      }
+    },
+    {
+      "name": "-L",
+      "description": "Use labels for source identifiers (shortcut for -t LABEL)"
+    },
+    {
+      "name": "-p",
+      "description": "Exclude pseudofs mounts (default behavior)"
+    },
+    {
+      "name": "-P",
+      "description": "Include pseudofs mounts"
+    },
+    {
+      "name": "-t",
+      "description": "Use TAG for source identifiers (TAG should be one of: LABEL, UUID, PARTLABEL, PARTUUID)",
+      "args": {
+        "name": "tag"
+      }
+    },
+    {
+      "name": "-U",
+      "description": "Use UUIDs for source identifiers (shortcut for -t UUID)"
+    },
+    {
+      "name": "-h",
+      "description": "Print this help message"
+    }
+  ],
+  "args": {
+    "name": "root",
+    "template": "folders"
+  }
+}

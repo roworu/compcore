@@ -367,11 +367,23 @@ fn continuation(
 
 fn parse_option(line: &str, lines: &[String], ix: usize) -> Option<(Opt, usize)> {
     let (indent, head, description_column, description) = split_row(line);
-    let head = head.trim();
+    let mut head = head.trim().to_string();
     if !head.starts_with('-') {
         return None;
     }
-    let (names, attached, repeatable) = parse_names(head);
+    // paru puts the argument in a column of its own: `--mode   <mode>   description`
+    let mut description = description;
+    if let Some((value, rest)) = description
+        .strip_prefix('<')
+        .and_then(|rest| rest.split_once('>'))
+        && !head.contains(['<', '=', '['])
+        && !value.contains(' ')
+        && (rest.is_empty() || rest.starts_with(' '))
+    {
+        head = format!("{head} <{value}>");
+        description = rest.trim_start();
+    }
+    let (names, attached, repeatable) = parse_names(&head);
     if names.is_empty() {
         return None;
     }
@@ -423,6 +435,14 @@ struct Attached {
 /// the names of an option and the argument written after them, like
 /// `-f, --file=FILE`, `--color[=WHEN]`, `-o <file>` or `-M --machine=NAME`
 fn parse_names(head: &str) -> (Vec<String>, Option<Attached>, bool) {
+    // `--[no]flag` is two options, `--flag` and `--noflag`
+    if let Some(rest) = head.strip_prefix("--[no]") {
+        let (mut names, attached, repeatable) = parse_names(&format!("--{rest}"));
+        if let Some(name) = names.first().and_then(|name| name.strip_prefix("--")) {
+            names.push(format!("--no{name}"));
+        }
+        return (names, attached, repeatable);
+    }
     let chars: Vec<char> = head.chars().collect();
     let mut names = Vec::new();
     let mut attached: Option<Attached> = None;
@@ -1026,6 +1046,31 @@ Commands:
             ]
         );
         assert_eq!(spec.subcommands[0].name, Names::One("serve".into()));
+    }
+
+    #[test]
+    fn paru_argument_columns_and_negatable_flags() {
+        let spec = parse_help(
+            "paru",
+            r#"Options:
+    --mode       <mode>   Sets where paru looks for targets
+    --sortby     <field>
+    --[no]color           Colorize the output
+    --news                Print news, <none> if none
+"#,
+        );
+        let mode = &spec.options[0];
+        assert_eq!(mode.name, Names::One("--mode".into()));
+        assert_eq!(mode.args.at(0).unwrap().name.as_deref(), Some("mode"));
+        assert_eq!(
+            mode.description.as_deref(),
+            Some("Sets where paru looks for targets")
+        );
+        assert!(spec.options[1].args.at(0).is_some());
+        assert_eq!(spec.options[2].name, names(&["--color", "--nocolor"]));
+        assert!(spec.options[2].args.at(0).is_none());
+        // a `<` later in the description is no argument
+        assert!(spec.options[3].args.at(0).is_none());
     }
 
     #[test]

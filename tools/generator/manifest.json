@@ -2,7 +2,7 @@
   "groups": {
     "ubuntu": {
       "image": "docker.io/library/ubuntu:26.04",
-      "install": "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3 python3-pip zip unzip xz-utils curl wget openssh-client rsync systemd procps psmisc iproute2 iputils-ping diffutils cron passwd file snapd flatpak less mount util-linux && pip install --break-system-packages --quiet uv ruff && cp /usr/bin/ping /usr/local/bin/ping",
+      "install": "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3 python3-pip zip unzip xz-utils curl wget openssh-client rsync systemd procps psmisc iproute2 iputils-ping diffutils make cron passwd file snapd flatpak less mount util-linux && pip install --break-system-packages --quiet uv ruff && cp /usr/bin/ping /usr/local/bin/ping",
       "commands": [
         {
           "name": "uv",
@@ -282,6 +282,11 @@
           "args": { "name": "url", "isVariadic": true }
         },
         { "name": "wget", "description": "Download files from the web", "args": { "name": "url", "isVariadic": true } },
+        {
+          "name": "make",
+          "description": "Build targets of a makefile",
+          "args": { "name": "target", "isVariadic": true, "isOptional": true, "template": "make:targets" }
+        },
         { "name": "rsync", "description": "Fast, versatile file copying tool" },
         {
           "name": "kill",
@@ -447,7 +452,7 @@
     },
     "arch": {
       "image": "docker.io/library/archlinux:latest",
-      "install": "true",
+      "install": "pacman -Syu --noconfirm --needed --quiet pacman-contrib mkinitcpio reflector arch-install-scripts",
       "commands": [
         {
           "name": "pacman",
@@ -463,6 +468,89 @@
             ["-U", "--help"]
           ],
           "overlay": "pacman.json"
+        },
+        { "name": "makepkg", "description": "Build packages from a PKGBUILD", "overlay": "makepkg.json" },
+        {
+          "name": "pacman-key",
+          "description": "Manage pacman's keyring",
+          "args": { "name": "key", "isVariadic": true, "isOptional": true }
+        },
+        {
+          "name": "pacman-conf",
+          "description": "Query pacman's configuration",
+          "args": { "name": "directive", "isVariadic": true, "isOptional": true }
+        },
+        {
+          "name": "repo-add",
+          "description": "Add packages to a repository database",
+          "args": { "name": "file", "template": "filepaths", "isVariadic": true }
+        },
+        {
+          "name": "paccache",
+          "description": "Clean the pacman package cache",
+          "args": { "name": "package", "isVariadic": true, "isOptional": true, "template": "packages:pacman" }
+        },
+        {
+          "name": "pactree",
+          "description": "Show a package's dependency tree",
+          "args": { "name": "package", "template": "packages:pacman" }
+        },
+        { "name": "checkupdates", "description": "List pending pacman updates" },
+        {
+          "name": "updpkgsums",
+          "description": "Update the checksums of a PKGBUILD",
+          "args": { "name": "file", "template": "filepaths", "isOptional": true }
+        },
+        { "name": "mkinitcpio", "description": "Create an initial ramdisk", "overlay": "mkinitcpio.json" },
+        { "name": "reflector", "description": "Fetch and rank Arch Linux mirrors", "overlay": "reflector.json" },
+        {
+          "name": "pacstrap",
+          "description": "Install packages into a new root",
+          "args": [
+            { "name": "root", "template": "folders" },
+            { "name": "package", "isVariadic": true, "isOptional": true, "template": "packages:pacman" }
+          ]
+        },
+        {
+          "name": "genfstab",
+          "description": "Generate fstab entries for a root",
+          "args": { "name": "root", "template": "folders" }
+        }
+      ]
+    },
+    "aur": {
+      "image": "docker.io/library/archlinux:latest",
+      "install": "pacman -Syu --noconfirm --needed --quiet base-devel git && useradd -m build && echo 'build ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers && for p in yay-bin paru-bin; do su build -c \"cd && git clone -q https://aur.archlinux.org/$p.git && cd $p && makepkg -si --noconfirm\"; done",
+      "commands": [
+        {
+          "name": "paru",
+          "description": "AUR helper and pacman wrapper",
+          "args": { "name": "package", "isVariadic": true, "template": "packages:pacman" },
+          "extraHelp": [
+            ["-D", "--help"],
+            ["-F", "--help"],
+            ["-Q", "--help"],
+            ["-R", "--help"],
+            ["-S", "--help"],
+            ["-T", "--help"],
+            ["-U", "--help"]
+          ],
+          "overlay": "paru.json"
+        },
+        {
+          "name": "yay",
+          "description": "AUR helper and pacman wrapper",
+          "args": { "name": "package", "isVariadic": true, "template": "packages:pacman" },
+          "extraHelp": [
+            ["-D", "--help"],
+            ["-F", "--help"],
+            ["-Q", "--help"],
+            ["-R", "--help"],
+            ["-S", "--help"],
+            ["-T", "--help"],
+            ["-U", "--help"]
+          ],
+          "overlay": "yay.json"
         }
       ]
     },

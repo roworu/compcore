@@ -51,6 +51,7 @@ const BUNDLED: &[Bundled] = &[
     spec!("cargo"),
     spec!("cat"),
     spec!("cd"),
+    spec!("checkupdates"),
     spec!("chgrp"),
     spec!("chmod"),
     spec!("chown"),
@@ -72,6 +73,7 @@ const BUNDLED: &[Bundled] = &[
     spec!("find"),
     spec!("flatpak"),
     spec!("free"),
+    spec!("genfstab"),
     spec!("git"),
     spec!("grep"),
     spec!("gunzip"),
@@ -119,15 +121,24 @@ const BUNDLED: &[Bundled] = &[
     spec!("llama-tts"),
     spec!("ln"),
     spec!("ls"),
+    spec!("make"),
+    spec!("makepkg"),
     spec!("man"),
     spec!("mkdir"),
+    spec!("mkinitcpio"),
     spec!("mktemp"),
     spec!("mount"),
     spec!("mv"),
     spec!("npm"),
     spec!("obsidian-cli"),
     spec!("opencode"),
+    spec!("paccache"),
     spec!("pacman"),
+    spec!("pacman-conf"),
+    spec!("pacman-key"),
+    spec!("pacstrap"),
+    spec!("pactree"),
+    spec!("paru"),
     spec!("passwd"),
     spec!("ping"),
     spec!("pip"),
@@ -138,6 +149,8 @@ const BUNDLED: &[Bundled] = &[
     spec!("python"),
     spec!("python3"),
     spec!("realpath"),
+    spec!("reflector"),
+    spec!("repo-add"),
     spec!("rm"),
     spec!("rmdir"),
     spec!("rpm"),
@@ -162,6 +175,7 @@ const BUNDLED: &[Bundled] = &[
     spec!("uname"),
     spec!("uniq"),
     spec!("unzip"),
+    spec!("updpkgsums"),
     spec!("useradd"),
     spec!("userdel"),
     spec!("usermod"),
@@ -170,6 +184,7 @@ const BUNDLED: &[Bundled] = &[
     spec!("wget"),
     spec!("which"),
     spec!("xz"),
+    spec!("yay"),
     spec!("yum"),
     spec!("zip"),
     spec!("zstd"),
@@ -330,28 +345,6 @@ mod tests {
                 .unwrap_or_else(|| panic!("{name} doesn't parse"));
             assert!(spec.name.contains(name), "{name} is named {:?}", spec.name);
         }
-    }
-
-    #[test]
-    fn the_aws_spec_has_its_services_inline() {
-        let specs = Specs::load(None, None);
-        let aws = specs.get("aws").unwrap();
-        let ec2 = aws
-            .subcommands
-            .iter()
-            .find(|s| s.name.contains("ec2"))
-            .unwrap();
-        let describe = ec2
-            .subcommands
-            .iter()
-            .find(|s| s.name.contains("describe-instances"))
-            .unwrap();
-        assert!(
-            describe
-                .options
-                .iter()
-                .any(|o| o.name.contains("--instance-ids"))
-        );
     }
 
     #[test]

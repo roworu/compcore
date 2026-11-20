@@ -1,0 +1,32 @@
+{
+  "name": "updpkgsums",
+  "description": "Update the checksums of a PKGBUILD",
+  "options": [
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Display this help message and exit"
+    },
+    {
+      "name": [
+        "-m",
+        "--nocolor"
+      ],
+      "description": "Do not colorize output"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Display version information and exit"
+    }
+  ],
+  "args": {
+    "name": "file",
+    "template": "filepaths",
+    "isOptional": true
+  }
+}

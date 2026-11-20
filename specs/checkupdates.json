@@ -1,0 +1,45 @@
+{
+  "name": "checkupdates",
+  "description": "List pending pacman updates",
+  "options": [
+    {
+      "name": [
+        "-c",
+        "--change"
+      ],
+      "description": "Print only when available updates differ from the last --change run"
+    },
+    {
+      "name": [
+        "-d",
+        "--download"
+      ],
+      "description": "Download pending updates to the pacman cache"
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Display this help message and exit"
+    },
+    {
+      "name": "--nocolor",
+      "description": "Do not colorize output (listing color also dependent on Color option in pacman.conf)"
+    },
+    {
+      "name": [
+        "-n",
+        "--nosync"
+      ],
+      "description": "Do not sync the temporary database"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Display version information and exit"
+    }
+  ]
+}

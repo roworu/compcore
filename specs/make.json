@@ -1,0 +1,287 @@
+{
+  "name": "make",
+  "description": "Build targets of a makefile",
+  "options": [
+    {
+      "name": [
+        "-b",
+        "-m"
+      ],
+      "description": "Ignored for compatibility"
+    },
+    {
+      "name": [
+        "-B",
+        "--always-make"
+      ],
+      "description": "Unconditionally make all targets"
+    },
+    {
+      "name": [
+        "-C",
+        "--directory"
+      ],
+      "description": "Change to DIRECTORY before doing anything",
+      "args": {
+        "name": "directory",
+        "template": "folders"
+      }
+    },
+    {
+      "name": "-d",
+      "description": "Print lots of debugging information"
+    },
+    {
+      "name": "--debug",
+      "description": "Print various types of debugging information",
+      "args": {
+        "name": "flags",
+        "isOptional": true
+      }
+    },
+    {
+      "name": [
+        "-e",
+        "--environment-overrides"
+      ],
+      "description": "Environment variables override makefiles"
+    },
+    {
+      "name": [
+        "-E",
+        "--eval"
+      ],
+      "description": "Evaluate STRING as a makefile statement",
+      "args": {
+        "name": "string"
+      }
+    },
+    {
+      "name": [
+        "-f",
+        "--file",
+        "--makefile"
+      ],
+      "description": "Read FILE as a makefile",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Print this message and exit"
+    },
+    {
+      "name": [
+        "-i",
+        "--ignore-errors"
+      ],
+      "description": "Ignore errors from recipes"
+    },
+    {
+      "name": [
+        "-I",
+        "--include-dir"
+      ],
+      "description": "Search DIRECTORY for included makefiles",
+      "args": {
+        "name": "directory",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-j",
+        "--jobs"
+      ],
+      "description": "Allow N jobs at once",
+      "args": {
+        "name": "n",
+        "isOptional": true
+      }
+    },
+    {
+      "name": "--jobserver-style",
+      "description": "Select the style of jobserver to use",
+      "args": {
+        "name": "style"
+      }
+    },
+    {
+      "name": [
+        "-k",
+        "--keep-going"
+      ],
+      "description": "Keep going when some targets can't be made"
+    },
+    {
+      "name": [
+        "-l",
+        "--load-average",
+        "--max-load"
+      ],
+      "description": "Don't start multiple jobs unless load is below N",
+      "args": {
+        "name": "n",
+        "isOptional": true
+      }
+    },
+    {
+      "name": [
+        "-L",
+        "--check-symlink-times"
+      ],
+      "description": "Use the latest mtime between symlinks and target"
+    },
+    {
+      "name": [
+        "-n",
+        "--just-print",
+        "--dry-run",
+        "--recon"
+      ],
+      "description": "Don't actually run any recipe"
+    },
+    {
+      "name": [
+        "-o",
+        "--old-file",
+        "--assume-old"
+      ],
+      "description": "Consider FILE to be very old and don't remake it",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-O",
+        "--output-sync"
+      ],
+      "description": "Synchronize output of parallel jobs by TYPE",
+      "args": {
+        "name": "type",
+        "isOptional": true
+      }
+    },
+    {
+      "name": [
+        "-p",
+        "--print-data-base"
+      ],
+      "description": "Print make's internal database"
+    },
+    {
+      "name": [
+        "-q",
+        "--question"
+      ],
+      "description": "Run no recipe"
+    },
+    {
+      "name": [
+        "-r",
+        "--no-builtin-rules"
+      ],
+      "description": "Disable the built-in implicit rules"
+    },
+    {
+      "name": [
+        "-R",
+        "--no-builtin-variables"
+      ],
+      "description": "Disable the built-in variable settings"
+    },
+    {
+      "name": "--shuffle",
+      "description": "Perform shuffle of prerequisites and goals",
+      "args": {
+        "name": "seed",
+        "suggestions": [
+          "SEED",
+          "random",
+          "reverse",
+          "none"
+        ],
+        "isOptional": true
+      }
+    },
+    {
+      "name": [
+        "-s",
+        "--silent",
+        "--quiet"
+      ],
+      "description": "Don't echo recipes"
+    },
+    {
+      "name": "--no-silent",
+      "description": "Echo recipes (disable --silent mode)"
+    },
+    {
+      "name": [
+        "-S",
+        "--no-keep-going",
+        "--stop"
+      ],
+      "description": "Turns off -k"
+    },
+    {
+      "name": [
+        "-t",
+        "--touch"
+      ],
+      "description": "Touch targets instead of remaking them"
+    },
+    {
+      "name": "--trace",
+      "description": "Print tracing information"
+    },
+    {
+      "name": [
+        "-v",
+        "--version"
+      ],
+      "description": "Print the version number of make and exit"
+    },
+    {
+      "name": [
+        "-w",
+        "--print-directory"
+      ],
+      "description": "Print the current directory"
+    },
+    {
+      "name": "--no-print-directory",
+      "description": "Turn off -w, even if it was turned on implicitly"
+    },
+    {
+      "name": [
+        "-W",
+        "--what-if",
+        "--new-file",
+        "--assume-new"
+      ],
+      "description": "Consider FILE to be infinitely new",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--warn-undefined-variables",
+      "description": "Warn when an undefined variable is referenced"
+    }
+  ],
+  "args": {
+    "name": "target",
+    "template": "make:targets",
+    "isOptional": true,
+    "isVariadic": true
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "options": [
+    { "name": ["-A", "--ignorearch"], "description": "Ignore incomplete arch field in PKGBUILD", "args": [] },
+    { "name": ["-C", "--cleanbuild"], "description": "Remove $srcdir/ dir before building the package", "args": [] }
+  ]
+}

@@ -1,7 +1,9 @@
 //! shell completion: what could go at the cursor of a command line, from specs of known
 //! commands, programs in PATH and files on disk. a command with no spec is asked for its own
-//! help once, see `probe`; nothing else is run, and the engine knows nothing about the ui
+//! help once, see `probe`, and docker or podman list their objects, see `dynamic`; nothing
+//! else is run, and the engine knows nothing about the ui
 
+mod dynamic;
 mod packages;
 mod parse;
 mod probe;
@@ -374,6 +376,16 @@ fn add_arg(found: &mut Found, arg: &Arg, context: &LineContext, request: &Reques
     {
         add_packages(found, manager, context, request);
     }
+    // git refs, make targets and docker objects, known only from the project or system
+    for template in arg.template.all() {
+        for value in dynamic::values(template, &request.cwd, &request.path_var).unwrap_or_default()
+        {
+            let insert = |name: &str| format!("{} ", sources::escape(name, context.quote, true));
+            let names = std::slice::from_ref(&value.name);
+            let kind = Kind::Suggestion;
+            found.add(names, insert, value.description.as_ref(), kind, None, false);
+        }
+    }
 }
 
 /// what goes next after the words typed after the command, by its spec: like fig, the
@@ -547,6 +559,27 @@ mod tests {
         )
     }
 
+    /// writes an executable script. a child forked by another test thread while this
+    /// process holds the file open for writing would make running it fail with "text file
+    /// busy", so a short-lived `sh` writes it instead
+    #[cfg(unix)]
+    pub(crate) fn write_program(path: &Path, body: &str) {
+        use std::io::Write;
+        let mut child = std::process::Command::new("sh")
+            .args(["-c", "cat > \"$0\" && chmod 755 \"$0\""])
+            .arg(path)
+            .stdin(std::process::Stdio::piped())
+            .spawn()
+            .unwrap();
+        child
+            .stdin
+            .take()
+            .unwrap()
+            .write_all(body.as_bytes())
+            .unwrap();
+        assert!(child.wait().unwrap().success());
+    }
+
     fn complete_in(dir: &Path, line: &str) -> Completions {
         complete_at(dir, line, line.chars().count())
     }
@@ -685,6 +718,26 @@ mod tests {
     }
 
     #[test]
+    fn git_and_make_templates_complete_from_the_project() {
+        let dir = fixture("dynamic");
+        std::fs::create_dir_all(dir.join(".git/refs/heads")).unwrap();
+        std::fs::write(dir.join(".git/refs/heads/main"), "x\n").unwrap();
+        std::fs::write(dir.join(".git/refs/heads/my branch"), "x\n").unwrap();
+        std::fs::write(dir.join("Makefile"), "build: ## build it\n\tcc x\n").unwrap();
+        let switch = complete_in(&dir, "git switch m");
+        assert_eq!(labels(&switch), ["main", "my branch"]);
+        assert_eq!(inserts(&switch), ["main ", "my\\ branch "]);
+        assert_eq!(switch.candidates[0].description.as_deref(), Some("branch"));
+        // a template list keeps its files next to the refs
+        let checkout = complete_in(&dir, "git checkout ");
+        assert!(labels(&checkout).contains(&"main") && labels(&checkout).contains(&"Makefile"));
+        let make = complete_in(&dir, "make b");
+        assert_eq!(labels(&make), ["build"]);
+        assert_eq!(make.candidates[0].description.as_deref(), Some("build it"));
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
     fn llama_cpp_tools_complete_their_arguments() {
         let dir = fixture("llama");
         // values common_params lists in braces and brackets
@@ -739,15 +792,11 @@ mod tests {
     #[cfg(unix)]
     #[test]
     fn a_command_without_a_spec_is_completed_from_its_help() {
-        use std::os::unix::fs::PermissionsExt;
         let dir = fixture("probe");
-        let script = dir.join("bin/probe-tool");
-        std::fs::write(
-            &script,
+        write_program(
+            &dir.join("bin/probe-tool"),
             "#!/bin/sh\nprintf 'Usage: probe-tool [OPTIONS]\\n\\nCommands:\\n  deploy   Deploy things\\n\\nOptions:\\n  --fast   Run fast\\n'\n",
-        )
-        .unwrap();
-        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        );
         let at = |line: &str, probe_help: bool| {
             let request = Request {
                 buffer: line.into(),

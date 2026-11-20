@@ -263,7 +263,6 @@ fn hash(parts: &[&str]) -> u64 {
 #[cfg(all(test, unix))]
 mod tests {
     use super::*;
-    use std::os::unix::fs::PermissionsExt;
 
     fn temp(name: &str) -> PathBuf {
         let dir =
@@ -275,8 +274,7 @@ mod tests {
 
     fn program(dir: &Path, body: &str) -> PathBuf {
         let path = dir.join("fake");
-        std::fs::write(&path, body).unwrap();
-        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
+        crate::tests::write_program(&path, body);
         path
     }
 

@@ -1,0 +1,26 @@
+{
+  "options": [
+    { "name": ["-S", "--sync"], "description": "Install packages, -Syu updates the system", "priority": 76 },
+    { "name": ["-R", "--remove"], "description": "Remove packages", "priority": 75 },
+    { "name": ["-Q", "--query"], "description": "Query installed packages", "priority": 75 },
+    { "name": ["-G", "--getpkgbuild"], "description": "Download PKGBUILDs", "priority": 70 },
+    {
+      "name": ["-U", "--upgrade"],
+      "description": "Install package files",
+      "args": { "name": "file", "template": "filepaths", "isVariadic": true }
+    },
+    { "name": ["-F", "--files"], "description": "Query the files database" },
+    { "name": ["-D", "--database"], "description": "Operate on the package database" },
+    { "name": ["-T", "--deptest"], "description": "Check dependencies" },
+    { "name": ["-V", "--version"], "description": "Show the version" },
+    { "name": ["-h", "--help"], "description": "Show help, with an operation its options" },
+    {
+      "name": ["-B", "--build"],
+      "description": "Build the PKGBUILD in a folder",
+      "args": { "name": "dir", "template": "folders", "isOptional": true }
+    },
+    { "name": ["-P", "--show"], "description": "Show yay information" },
+    { "name": ["-W", "--web"], "description": "Interact with the AUR web" },
+    { "name": ["-Y", "--yay"], "description": "Yay specific operations" }
+  ]
+}

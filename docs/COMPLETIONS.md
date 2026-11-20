@@ -19,9 +19,9 @@ overlay when its help is unusual.
   written).
 - **specs are data, never code.** fig's `generators`, `script`, `custom` and function valued
   fields are ignored by the engine, so don't add them; they would only bloat the file. anything
-  that would need running a command to know (git branches, docker containers) stays without
-  suggestions. package names are the one exception: the engine lists the package manager's
-  local cache itself, see part 2.
+  that would need running a command to know stays without suggestions. package names, git
+  refs, make targets and docker or podman objects are the exceptions: specs ask for them with
+  a template and the engine finds them itself, see part 2.
 - **build specs from the real program**, its `--help` (or `help <cmd>`) in the container, not
   from memory. the parser is generic; an overlay is for what no help text can say: argument
   kinds, value suggestions, priorities, and programs whose help isn't in a parseable shape.
@@ -56,7 +56,9 @@ the engine reads:
 - an option whose argument isn't optional takes the next word, so set `args` only when it
   really takes one, and `"isOptional": true` for `--opt[=VALUE]` forms.
 - `template`: `"filepaths"` (files and folders) or `"folders"`; args without one complete
-  nothing, except their `suggestions`.
+  nothing, except their `suggestions`. `packages:<manager>`, `git:<branches|tags|remotes|refs|stashes>`,
+  `make:targets` and `<docker|podman>:<images|containers|volumes|networks>` (and `podman:pods`)
+  complete what the system has, see part 2.
 - `isPersistent` options are also taken after subcommands, use it for global options.
 - `hidden` hides a name until it is typed whole.
 
@@ -110,8 +112,7 @@ commands. a command is either a name or an object:
 - `args`: what the program takes, when the usage line isn't enough.
 - `subArgs`: arguments by subcommand path, like `install` or `pip install`.
 - `overlay`: a json file in `tools/generator/overlays/` merged over the generated spec.
-  objects merge, arrays of named items merge by name (a `null` entry drops one), other arrays
-  replace. overlays hold priorities, suggestions and argument kinds the help can't express.
+  objects merge, arrays of named items merge by name, other arrays replace. overlays hold priorities, suggestions and argument kinds the help can't express.
 - `extraHelp`: more help invocations merged into the top spec, like pacman's per-operation
   help.
 - `handwritten`: the spec is written by hand and regeneration skips it.
@@ -179,7 +180,7 @@ node for it would add a runtime for little gain.
 fig's specs (MIT) are typescript modules. the engine reads their json form, the subset in part 1;
 `generators`, `script` and other code are ignored.
 
-about 135 commands are bundled: core tools (ls, cp, grep, find, tar, curl, ssh, rsync, ps,
+about 150 commands are bundled: core tools (ls, cp, grep, find, tar, curl, ssh, rsync, ps,
 systemctl, journalctl, ...), package managers (apt, apt-get, apt-cache, dpkg, dnf, yum, rpm,
 pacman, zypper, apk, brew, snap, flatpak, pip), git, cargo, docker, npm, podman, python, aws with all its services
 and operations, and the llama.cpp tools. each spec is embedded in the binary but only parsed
@@ -188,6 +189,12 @@ when its command is completed. a `<command>.json` in the specs folder the fronte
 
 an argument with a `packages:<manager>` template (apt, dnf or yum, pacman, zypper, apk, brew,
 flatpak) completes the names in that manager's local cache, read once per process.
+
+`git:` templates complete branches, tags, remotes, remote branches (`refs` has all three) and
+stashes of the repository around the cwd, read from its `.git` files (loose refs,
+packed-refs, config, the stash log), worktrees included. `make:targets` reads the makefile in
+the cwd; a `## text` after a rule becomes its description. `docker:` and `podman:` templates
+run the program's own listing, kept for five seconds.
 
 for a command with no spec, the engine (unless the frontend turns probing off) runs
 `<command> [sub] --help` once, parses it with the same parser, and caches the result in memory
@@ -207,6 +214,9 @@ bundled and user specs are declarative and never run anything. package names com
 manager's local cache with cache-only queries (`apt-cache pkgnames`, `dnf -C repoquery
 --available`, `pacman -Ssq`, `zypper --no-refresh search`, `apk search`, `brew formulae`,
 `flatpak remote-ls --cached`): they print names, don't touch the network and change nothing.
+git refs and make targets are read from files, nothing runs. docker and podman objects come
+from `<docker|podman> image ls`, `ps --all`, `volume ls`, `network ls` and `pod ps` with a
+`--format`: they list, change nothing, and are bounded like a probe (one second, 1 MiB).
 commands come from listing PATH, files from listing folders, the rest from the specs.
 
 runtime probing is the one place the engine starts a program to find completions: the command the
@@ -214,8 +224,8 @@ user is already typing, with stdin closed, a fixed `C` locale, pagers disabled, 
 deadline and a 256 KiB output cap. it is on by default because it is the only way a random
 cli gets useful completions; `Request::probe_help` false and `compcore --no-probe` turn it
 off. it is still an implicit
-execution path for a program on PATH, so providers that need more (running `git branch`,
-`docker ps`) remain unsupported.
+execution path for a program on PATH, so providers beyond the listings above remain
+unsupported.
 
 ### frontends
 

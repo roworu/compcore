@@ -1,0 +1,273 @@
+{
+  "name": "mkinitcpio",
+  "description": "Create an initial ramdisk",
+  "options": [
+    {
+      "name": [
+        "-A",
+        "--addhooks"
+      ],
+      "description": "Add specified hooks, comma separated, to image",
+      "args": {
+        "name": "hooks"
+      }
+    },
+    {
+      "name": [
+        "-c",
+        "--config"
+      ],
+      "description": "Use alternate config file",
+      "args": {
+        "name": "config",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-g",
+        "--generate"
+      ],
+      "description": "Generate cpio image and write to specified path",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-H",
+        "--hookhelp"
+      ],
+      "description": "Display help for given hook and exit",
+      "args": {
+        "name": "hookname"
+      }
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Display this message and exit"
+    },
+    {
+      "name": [
+        "-k",
+        "--kernel"
+      ],
+      "description": "Use specified kernel version",
+      "args": {
+        "name": "kernelver"
+      }
+    },
+    {
+      "name": [
+        "-L",
+        "--listhooks"
+      ],
+      "description": "List all available hooks"
+    },
+    {
+      "name": [
+        "-M",
+        "--automods"
+      ],
+      "description": "Display modules found via autodetection"
+    },
+    {
+      "name": [
+        "-n",
+        "--nocolor"
+      ],
+      "description": "Disable colorized output messages"
+    },
+    {
+      "name": "--nopost",
+      "description": "Disable post hooks"
+    },
+    {
+      "name": [
+        "-I",
+        "--include"
+      ],
+      "description": "Add a list of files or directories, comma separated, to image",
+      "args": {
+        "name": "paths"
+      }
+    },
+    {
+      "name": [
+        "-p",
+        "--preset"
+      ],
+      "description": "Build specified preset from /etc/mkinitcpio.d",
+      "args": {
+        "name": "preset",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-P",
+        "--allpresets"
+      ],
+      "description": "Process all preset files in /etc/mkinitcpio.d"
+    },
+    {
+      "name": [
+        "-R",
+        "--remove"
+      ],
+      "description": "Remove specified preset images This option can only be used with either '-p|--presets' or '-P|--allpresets'"
+    },
+    {
+      "name": [
+        "-r",
+        "--moduleroot"
+      ],
+      "description": "Root directory for modules",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-S",
+        "--skiphooks"
+      ],
+      "description": "Skip specified hooks, comma-separated, during build",
+      "args": {
+        "name": "hooks"
+      }
+    },
+    {
+      "name": [
+        "-s",
+        "--save"
+      ],
+      "description": "Save build directory"
+    },
+    {
+      "name": [
+        "-d",
+        "--generatedir"
+      ],
+      "description": "Write generated image into <dir>",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-t",
+        "--builddir"
+      ],
+      "description": "Use DIR as the temporary build directory",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-D",
+        "--hookdir"
+      ],
+      "description": "Specify where to look for hooks",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-U",
+        "--uki"
+      ],
+      "description": "Build a unified kernel image",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Display version information and exit"
+    },
+    {
+      "name": [
+        "-v",
+        "--verbose"
+      ],
+      "description": "Verbose output"
+    },
+    {
+      "name": [
+        "-z",
+        "--compress"
+      ],
+      "description": "Use an alternate compressor on the image (cat, xz, lz4, zstd)",
+      "args": {
+        "name": "program"
+      }
+    },
+    {
+      "name": "--cmdline",
+      "description": "Set kernel command line from file or drop-in directory",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--no-cmdline",
+      "description": "Do not embed a kernel command line"
+    },
+    {
+      "name": "--osrelease",
+      "description": "Include os-release",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--splash",
+      "description": "Include bitmap splash",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--kernelimage",
+      "description": "Kernel image",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--uefistub",
+      "description": "Location of UEFI stub loader",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--ukiconfig",
+      "description": "Location of configuration file for UKIs, used for signing, etc",
+      "args": {
+        "name": "path",
+        "template": "filepaths"
+      }
+    }
+  ]
+}

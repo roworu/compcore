@@ -1,0 +1,196 @@
+{
+  "name": "reflector",
+  "description": "Fetch and rank Arch Linux mirrors",
+  "options": [
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Show this help message and exit"
+    },
+    {
+      "name": "--connection-timeout",
+      "description": "The number of seconds to wait before a connection times out",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--download-timeout",
+      "description": "The number of seconds to wait before a download times out",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--list-countries",
+      "description": "Display a table of the distribution of servers by country"
+    },
+    {
+      "name": "--cache-timeout",
+      "description": "The cache timeout in seconds for the data retrieved from the Arch Linux Mirror Status API",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--url",
+      "description": "The URL from which to retrieve the mirror data in JSON format",
+      "args": {
+        "name": "url"
+      }
+    },
+    {
+      "name": "--save",
+      "description": "Save the mirrorlist to the given path",
+      "args": {
+        "name": "filepath",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--sort",
+      "description": "Sort the mirrorlist. \"age\": last server synchronization",
+      "args": {
+        "name": "field",
+        "suggestions": [
+          "age",
+          "rate",
+          "country",
+          "score",
+          "delay"
+        ]
+      }
+    },
+    {
+      "name": "--threads",
+      "description": "Use n threads for rating mirrors",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--verbose",
+      "description": "Print extra information to STDERR"
+    },
+    {
+      "name": "--info",
+      "description": "Print mirror information instead of a mirror list"
+    },
+    {
+      "name": [
+        "-a",
+        "--age"
+      ],
+      "description": "Only return mirrors that have synchronized in the last n hours. n may be an integer or a decimal number",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--delay",
+      "description": "Only return mirrors with a reported sync delay of n hours or less, where n is a float",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": [
+        "-c",
+        "--country"
+      ],
+      "description": "Restrict mirrors to selected countries",
+      "args": {
+        "name": "country"
+      }
+    },
+    {
+      "name": [
+        "-f",
+        "--fastest"
+      ],
+      "description": "Return the n fastest mirrors that meet the other criteria",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": [
+        "-i",
+        "--include"
+      ],
+      "description": "Include servers that match <regex>, where <regex> is a Python regular express",
+      "args": {
+        "name": "regex"
+      }
+    },
+    {
+      "name": [
+        "-x",
+        "--exclude"
+      ],
+      "description": "Exclude servers that match <regex>, where <regex> is a Python regular express",
+      "args": {
+        "name": "regex"
+      }
+    },
+    {
+      "name": [
+        "-l",
+        "--latest"
+      ],
+      "description": "Limit the list to the n most recently synchronized servers",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": "--score",
+      "description": "Limit the list to the n servers with the highest score",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": [
+        "-n",
+        "--number"
+      ],
+      "description": "Return at most n mirrors",
+      "args": {
+        "name": "n"
+      }
+    },
+    {
+      "name": [
+        "-p",
+        "--protocol"
+      ],
+      "description": "Match one of the given protocols, e.g. \"https\" or \"ftp\"",
+      "args": {
+        "name": "protocol"
+      }
+    },
+    {
+      "name": "--completion-percent",
+      "description": "Set the minimum completion percent for the returned mirrors",
+      "args": {
+        "name": "0-100",
+        "isOptional": true
+      }
+    },
+    {
+      "name": "--isos",
+      "description": "Only return mirrors that host ISOs"
+    },
+    {
+      "name": "--ipv4",
+      "description": "Only return mirrors that support IPv4"
+    },
+    {
+      "name": "--ipv6",
+      "description": "Only return mirrors that support IPv6"
+    }
+  ]
+}

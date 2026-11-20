@@ -1,0 +1,231 @@
+{
+  "name": "makepkg",
+  "description": "Build packages from a PKGBUILD",
+  "options": [
+    {
+      "name": [
+        "-A",
+        "--ignorearch"
+      ],
+      "description": "Ignore incomplete arch field in PKGBUILD"
+    },
+    {
+      "name": [
+        "-c",
+        "--clean"
+      ],
+      "description": "Clean up work files after build"
+    },
+    {
+      "name": [
+        "-C",
+        "--cleanbuild"
+      ],
+      "description": "Remove $srcdir/ dir before building the package"
+    },
+    {
+      "name": [
+        "-d",
+        "--nodeps"
+      ],
+      "description": "Skip all dependency checks"
+    },
+    {
+      "name": [
+        "-D",
+        "--dir"
+      ],
+      "description": "Change to directory <dir> before processing PKGBUILD",
+      "args": {
+        "name": "dir",
+        "template": "folders"
+      }
+    },
+    {
+      "name": [
+        "-e",
+        "--noextract"
+      ],
+      "description": "Do not extract source files (use existing $srcdir/ dir)"
+    },
+    {
+      "name": [
+        "-f",
+        "--force"
+      ],
+      "description": "Overwrite existing package"
+    },
+    {
+      "name": [
+        "-g",
+        "--geninteg"
+      ],
+      "description": "Generate integrity checks for source files"
+    },
+    {
+      "name": [
+        "-h",
+        "--help"
+      ],
+      "description": "Show this help message and exit"
+    },
+    {
+      "name": [
+        "-i",
+        "--install"
+      ],
+      "description": "Install package after successful build"
+    },
+    {
+      "name": [
+        "-L",
+        "--log"
+      ],
+      "description": "Log package build process"
+    },
+    {
+      "name": [
+        "-m",
+        "--nocolor"
+      ],
+      "description": "Disable colorized output messages"
+    },
+    {
+      "name": [
+        "-o",
+        "--nobuild"
+      ],
+      "description": "Download and extract files only"
+    },
+    {
+      "name": "-p",
+      "description": "Use an alternate build script (instead of 'PKGBUILD')",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": [
+        "-r",
+        "--rmdeps"
+      ],
+      "description": "Remove installed dependencies after a successful build"
+    },
+    {
+      "name": [
+        "-R",
+        "--repackage"
+      ],
+      "description": "Repackage contents of the package without rebuilding"
+    },
+    {
+      "name": [
+        "-s",
+        "--syncdeps"
+      ],
+      "description": "Install missing dependencies with pacman"
+    },
+    {
+      "name": [
+        "-S",
+        "--source"
+      ],
+      "description": "Generate a source-only tarball without downloaded sources"
+    },
+    {
+      "name": [
+        "-V",
+        "--version"
+      ],
+      "description": "Show version information and exit"
+    },
+    {
+      "name": "--allsource",
+      "description": "Generate a source-only tarball including downloaded sources"
+    },
+    {
+      "name": "--check",
+      "description": "Run the check() function in the PKGBUILD"
+    },
+    {
+      "name": "--config",
+      "description": "Use an alternate config file (instead of '/etc/makepkg.conf')",
+      "args": {
+        "name": "file",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "--holdver",
+      "description": "Do not update VCS sources"
+    },
+    {
+      "name": "--key",
+      "description": "Specify a key to use for gpg signing instead of the default",
+      "args": {
+        "name": "key"
+      }
+    },
+    {
+      "name": "--noarchive",
+      "description": "Do not create package archive"
+    },
+    {
+      "name": "--nocheck",
+      "description": "Do not run the check() function in the PKGBUILD"
+    },
+    {
+      "name": "--noprepare",
+      "description": "Do not run the prepare() function in the PKGBUILD"
+    },
+    {
+      "name": "--nosign",
+      "description": "Do not create a signature for the package"
+    },
+    {
+      "name": "--packagelist",
+      "description": "Only list package filepaths that would be produced"
+    },
+    {
+      "name": "--printsrcinfo",
+      "description": "Print the generated SRCINFO and exit"
+    },
+    {
+      "name": "--sign",
+      "description": "Sign the resulting package with gpg"
+    },
+    {
+      "name": "--skipchecksums",
+      "description": "Do not verify checksums of the source files"
+    },
+    {
+      "name": "--skipinteg",
+      "description": "Do not perform any verification checks on source files"
+    },
+    {
+      "name": "--skippgpcheck",
+      "description": "Do not verify source files with PGP signatures"
+    },
+    {
+      "name": "--verifysource",
+      "description": "Download source files (if needed) and perform integrity checks"
+    },
+    {
+      "name": "--asdeps",
+      "description": "Install packages as non-explicitly installed"
+    },
+    {
+      "name": "--needed",
+      "description": "Do not reinstall the targets that are already up to date"
+    },
+    {
+      "name": "--noconfirm",
+      "description": "Do not ask for confirmation when resolving dependencies"
+    },
+    {
+      "name": "--noprogressbar",
+      "description": "Do not show a progress bar when downloading files"
+    }
+  ]
+}

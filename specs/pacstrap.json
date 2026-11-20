@@ -1,0 +1,66 @@
+{
+  "name": "pacstrap",
+  "description": "Install packages into a new root",
+  "options": [
+    {
+      "name": "-C",
+      "description": "Use an alternate config file for pacman",
+      "args": {
+        "name": "config",
+        "template": "filepaths"
+      }
+    },
+    {
+      "name": "-c",
+      "description": "Use the package cache on the host, rather than the target"
+    },
+    {
+      "name": "-D",
+      "description": "Skip pacman dependency checks"
+    },
+    {
+      "name": "-G",
+      "description": "Avoid copying the host's pacman keyring to the target"
+    },
+    {
+      "name": "-i",
+      "description": "Prompt for package confirmation when needed (run interactively)"
+    },
+    {
+      "name": "-K",
+      "description": "Initialize an empty pacman keyring in the target (implies '-G')"
+    },
+    {
+      "name": "-M",
+      "description": "Avoid copying the host's mirrorlist to the target"
+    },
+    {
+      "name": "-N",
+      "description": "Run in unshare mode as a regular user"
+    },
+    {
+      "name": "-P",
+      "description": "Copy the host's pacman config to the target"
+    },
+    {
+      "name": "-U",
+      "description": "Use pacman -U to install packages"
+    },
+    {
+      "name": "-h",
+      "description": "Print this help message"
+    }
+  ],
+  "args": [
+    {
+      "name": "root",
+      "template": "folders"
+    },
+    {
+      "name": "package",
+      "template": "packages:pacman",
+      "isOptional": true,
+      "isVariadic": true
+    }
+  ]
+}

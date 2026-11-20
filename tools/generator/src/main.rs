@@ -385,7 +385,7 @@ fn apply_overlay(spec: &mut Spec, path: &Path) -> Result<(), String> {
 }
 
 /// an overlay wins over the generated spec. objects merge, arrays of named items merge by
-/// name (a null drops one), other arrays replace
+/// name, other arrays replace
 fn merge_value(base: &mut Value, overlay: &Value) {
     match (base, overlay) {
         (Value::Object(base), Value::Object(overlay)) => {
@@ -406,10 +406,7 @@ fn merge_value(base: &mut Value, overlay: &Value) {
 }
 
 fn named(items: &[Value]) -> bool {
-    !items.is_empty()
-        && items
-            .iter()
-            .all(|item| item.is_null() || item.get("name").is_some())
+    !items.is_empty() && items.iter().all(|item| item.get("name").is_some())
 }
 
 fn merge_named(base: &mut Vec<Value>, overlay: &[Value]) {
@@ -418,13 +415,9 @@ fn merge_named(base: &mut Vec<Value>, overlay: &[Value]) {
         let known = base
             .iter()
             .position(|have| names_of(have).iter().any(|name| names.contains(name)));
-        match (known, item.is_null()) {
-            (Some(ix), true) => {
-                base.remove(ix);
-            }
-            (Some(ix), false) => merge_value(&mut base[ix], item),
-            (None, false) => base.push(item.clone()),
-            (None, true) => {}
+        match known {
+            Some(ix) => merge_value(&mut base[ix], item),
+            None => base.push(item.clone()),
         }
     }
 }
@@ -445,27 +438,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn overlays_merge_by_name_and_null_drops() {
+    fn overlays_merge_by_name() {
         let mut base: Value = serde_json_lenient::from_str(
             r#"{"name":"t","options":[{"name":"-a","description":"a"},{"name":"-b"}],
-                "args":[{"name":"one"}]}"#,
+                "top":["one"]}"#,
         )
         .unwrap();
         let overlay: Value = serde_json_lenient::from_str(
-            r#"{"description":"mine","options":[{"name":"-b","description":"b"},null,
-                {"name":"-c"}],"args":[{"name":"two"}]}"#,
+            r#"{"description":"mine","options":[{"name":"-b","description":"b"},
+                {"name":"-c"}],"top":["two"]}"#,
         )
         .unwrap();
         merge_value(&mut base, &overlay);
         assert_eq!(base["description"], "mine");
-        // -b got its description, and the null entry removed -a
-        assert_eq!(base["options"].as_array().unwrap().len(), 2);
-        assert_eq!(base["options"][0]["name"], "-b");
-        assert_eq!(base["options"][0]["description"], "b");
-        assert_eq!(base["options"][1]["name"], "-c");
+        // -a stays, -b got its description, -c is new
+        let options = base["options"].as_array().unwrap();
+        assert_eq!(options.len(), 3);
+        assert_eq!(options[0]["description"], "a");
+        assert_eq!(options[1]["description"], "b");
+        assert_eq!(options[2]["name"], "-c");
         // plain arrays replace whole
-        assert_eq!(base["args"].as_array().unwrap().len(), 1);
-        assert_eq!(base["args"][0]["name"], "two");
+        assert_eq!(base["top"].as_array().unwrap().len(), 1);
+        assert_eq!(base["top"][0], "two");
     }
 
     #[test]

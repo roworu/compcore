@@ -159,18 +159,16 @@ mod tests {
     #[cfg(unix)]
     #[test]
     fn queries_use_the_reported_path_and_fail_soft() {
-        use std::os::unix::fs::PermissionsExt;
         let dir = std::env::temp_dir().join(format!("compcore-packages-{}", std::process::id()));
         std::fs::remove_dir_all(&dir).ok();
         std::fs::create_dir_all(&dir).unwrap();
         let cache = dir.join("apt-cache");
-        std::fs::write(&cache, "#!/bin/sh\necho firefox\necho firefox-esr\n").unwrap();
-        std::fs::set_permissions(&cache, std::fs::Permissions::from_mode(0o755)).unwrap();
+        crate::tests::write_program(&cache, "#!/bin/sh\necho firefox\necho firefox-esr\n");
         let path_var = dir.to_string_lossy().into_owned();
         assert_eq!(read(Manager::Apt, &path_var), ["firefox", "firefox-esr"]);
         // no program, and a program that fails, give nothing
         assert!(read(Manager::Pacman, &path_var).is_empty());
-        std::fs::write(&cache, "#!/bin/sh\nexit 1\n").unwrap();
+        crate::tests::write_program(&cache, "#!/bin/sh\nexit 1\n");
         assert!(read(Manager::Apt, &path_var).is_empty());
         std::fs::remove_dir_all(&dir).ok();
     }
